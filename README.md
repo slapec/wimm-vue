@@ -25,6 +25,7 @@ than to choose one.
     
     DEBUG = False
     SECRET_KEY = 'some secret'
+    STATIC_ROOT = '/some_folder/'
     ```
     
     For the full list of available settings [check the Django 

@@ -1,0 +1,39 @@
+{% load i18n %}
+{% load static %}
+
+{% get_current_language as LANGUAGE_CODE %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WIMM</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'item/list/css/list.css' %}">
+    <script type="text/javascript" src="{% static 'jquery/js/jquery-2.2.4.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'item/list/js/list.js' %}"></script>
+</head>
+<body>
+    <div id="overlay">
+        <div class="loading"></div>
+    </div>
+
+    <form id="item-form">
+        {% csrf_token %}
+        <div id="inputs">
+            <div id="date-price">
+                {{ form.date }}
+                {{ form.price }}
+                <input type="submit" tabindex="-1">
+            </div>
+            <div id="name-meta">
+                {{ form.name }}
+                {{ form.meta }}
+                <input type="submit" tabindex="-1">
+            </div>
+        </div>
+    </form>
+
+    <div id="items"></div>
+</body>
+</html>
