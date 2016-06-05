@@ -8,8 +8,40 @@
 
     DateService.prototype.createItem = function(dateItemsElem, details){
         var itemElem = document.createElement('li');
-        itemElem.innerHTML = JSON.stringify(details);
         dateItemsElem.insertBefore(itemElem, dateItemsElem.firstChild);
+        
+        // Price
+        var priceElem = document.createElement('span');
+        priceElem.className = 'numeric price';
+
+        var price = details.price;
+        var sign = '+';
+        if(price[0] === '-'){
+            sign = '-';
+            price = price.slice(1);
+        }
+
+        if(sign === '+'){
+            priceElem.classList.add('positive');
+        }
+        else {
+            priceElem.classList.add('negative');
+        }
+        priceElem.innerHTML = sign + price;
+
+        itemElem.appendChild(priceElem);
+        
+        // Name
+        var nameElem = document.createElement('span');
+        nameElem.className = 'name';
+        nameElem.innerHTML = details.name;
+        itemElem.appendChild(nameElem);
+        
+        // meta
+        var metaElem = document.createElement('span');
+        metaElem.className = 'meta';
+        metaElem.innerHTML = details.meta;
+        itemElem.appendChild(metaElem);
     };
 
     DateService.prototype.createDate = function(dateItems){
@@ -27,7 +59,7 @@
             target.insertBefore(dateElem, dateBefore);
 
             var left = document.createElement('div');
-            left.className = 'left';
+            left.className = 'numeric left';
             left.innerHTML = date;
             dateElem.appendChild(left);
 
@@ -116,7 +148,9 @@
         var value = window.getSelection().toString();
         price.blur();
 
-        if(value[0] !== '+'){
+        var sign = value[0];
+        
+        if(!(sign === '+') && !(sign == '-')){
             value = -1 * parseFloat(value);
         }
 
