@@ -9,7 +9,7 @@ body {
 /* Item form ---------------------------------------------------------------- */
 #item-form {
     width: 100%;
-    padding: 8px;
+    padding: 6px;
     box-sizing: border-box;
 }
 
@@ -94,13 +94,12 @@ body {
 #items {
     box-sizing: border-box;
     border-top: 1px dashed #9a9a9a;
-    padding: 8px;
+    padding: 6px;
 }
 
 .date {
-    outline: 2px solid #ddd;
+    outline: 1px solid #ddd;
     border-bottom: 1px solid #bfbfbf;
-    border-right: 1px solid #bfbfbf;
     background: white;
     margin-bottom: 6px;
     display: flex;
@@ -111,8 +110,11 @@ body {
 }
 
 .left {
+    position: relative;
     min-width: 8em;
     text-align: center;
+    padding: 8px;
+    margin-bottom: auto;
 }
 
 .date ul {
@@ -152,9 +154,24 @@ body {
     color: #059c00;
 }
 
+.sticked .left {
+    background: #fff;
+    position: fixed;
+    top: 0;
+}
+
+.sticked ul {
+    margin-left: calc(8em + 16px);
+}
+
+.sticked.absolute .left {
+    position: absolute;
+}
+
 @media (max-width: 800px){
     .left {
-        padding: 4px;
+        padding: 8px;
+        border-top: 1px solid #bfbfbf;
         border-bottom: 1px solid #ddd;
     }
 
@@ -175,6 +192,15 @@ body {
         min-width: initial;
         margin-left: 4px;
         margin-right: 0;
+    }
+
+    .sticked ul {
+        margin-left: 0;
+    }
+
+    .sticked .left{
+        left: 6px;
+        right: 6px;
     }
 }
 
