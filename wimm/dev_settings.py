@@ -115,4 +115,4 @@ STATICFILES_DIRS = (
 # Project specific values ------------------------------------------------------
 
 # List the items of this many days in item listing
-ITEM_LIST_DAYS = 7
+ITEM_LIST_DAYS = 70

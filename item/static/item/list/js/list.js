@@ -8,12 +8,13 @@
         this.media = window.matchMedia('(max-width: 800px)');
 
         window.addEventListener('resize', function(){
-            console.log('resize');
             self.cache();
         })
     }
 
     StickyService.prototype.cache = function(){
+        console.log('cache');
+
         var sticked = this.sticked;
         if(sticked){
             sticked.date.classList.remove('sticked');
@@ -27,7 +28,7 @@
             var elem = dateElems[i];
 
             var items = elem.getElementsByTagName('li');
-            var left = elem.getElementsByClassName('left')[0];
+            var dateHead = elem.getElementsByClassName('date-head')[0];
 
             this.dateElems.push({
                 date: elem,
@@ -49,8 +50,9 @@
         for(var i=0; i<elems.length; i++){
             var elem =  elems[i];
 
-            var bounds = elem.date.getBoundingClientRect();
-            if(bounds.top <= 0){
+            // var bounds = elem.date.getBoundingClientRect();
+            var bounds = elem.date.offsetTop - document.body.scrollTop;
+            if(bounds <= 0){
                 lastInvisible = elem;
             }
             else {
@@ -145,7 +147,7 @@
             target.insertBefore(dateElem, dateBefore);
 
             var left = document.createElement('div');
-            left.className = 'numeric left';
+            left.className = 'numeric date-head';
             left.innerHTML = date;
             dateElem.appendChild(left);
 
@@ -207,7 +209,7 @@
     };
 
     // ------------------------------------------------------------------------
-    var overlay, form, price, date, items, dateService, stcikyService;
+    var overlay, form, price, date, items, dateService, stickyService;
 
     function resetForm(){
         var lastDate = date.val();
@@ -245,7 +247,7 @@
 
     $(function(){
         // Setting up the UI ---------------------------------------------------
-        stcikyService = new StickyService();
+        stickyService = new StickyService();
 
         overlay = $('#overlay');
         form = $('#item-form');
@@ -273,7 +275,7 @@
                 dateService.createDate(details);
                 enableInputs();
                 price.focus();
-                stcikyService.cache();
+                stickyService.cache();
             })
             .error(function(){
                enableInputs();
@@ -285,12 +287,12 @@
         });
 
         items.on('loadPage.end', function(){
-            stcikyService.cache();
+            // stickyService.cache();
             overlay.hide();
         });
 
-        $(window).on('scroll', function(){
-            stcikyService.stick();
+        window.addEventListener('scroll', function(){
+            // stickyService.stick();
         });
 
         // ---------------------------------------------------------------------

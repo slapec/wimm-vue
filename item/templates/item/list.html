@@ -7,7 +7,7 @@
 <html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
     <title>WIMM</title>
     <link rel="stylesheet" type="text/css" href="{% static 'item/list/css/list.css' %}">
     <script type="text/javascript" src="{% static 'jquery/js/jquery-2.2.4.min.js' %}"></script>
@@ -15,25 +15,37 @@
 </head>
 <body>
     <div id="overlay">
-        <div class="loading"></div>
+        <div class="spinner"></div>
     </div>
 
-    <form id="item-form">
-        {% csrf_token %}
-        <div id="inputs">
-            <div id="date-price">
+    <input type="checkbox" id="sidebar-state">
+
+    <div id="sidebar">
+        <div id="sidebar-content">
+            Hello
+            <div style="height: 2000px"></div>
+            World
+        </div>
+        <label id="sidebar-overlay" for="sidebar-state"></label>
+    </div>
+
+    <div id="main">
+        <div id="title">
+            <label id="show-menu" for="sidebar-state">&equiv;</label>
+            <div id="sticky-date">{% trans 'WIMM' %}</div>
+        </div>
+
+        <div id="content">
+            <form id="item-form">
+                {% csrf_token %}
                 {{ form.date }}
                 {{ form.price }}
-                <input type="submit" tabindex="-1">
-            </div>
-            <div id="name-meta">
                 {{ form.name }}
                 {{ form.meta }}
                 <input type="submit" tabindex="-1">
-            </div>
+            </form>
+            <div id="items"></div>
         </div>
-    </form>
-
-    <div id="items"></div>
+    </div>
 </body>
 </html>

@@ -1,4 +1,11 @@
+html {
+    height: 100%;
+    width: 100%;
+}
+
 body {
+    height: 100%;
+    width: 100%;
     background: #e9e9e9;
     padding: 0;
     margin: 0;
@@ -6,89 +13,122 @@ body {
     font-size: 14pt;
 }
 
-/* Item form ---------------------------------------------------------------- */
-#item-form {
-    width: 100%;
-    padding: 6px;
-    box-sizing: border-box;
-}
-
-#item-form input {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 4px;
-    margin-left: 4px;
-    border: 1px solid #bbb;
-    font-size: 14pt;
-}
-
-#item-form input[type=submit] {
-    background: #39a2bf;
-    color: #fff;
-    border: 1px solid #286d81;
-}
-
-#item-form input[type=submit]:active {
-    background: #286d81;
-    border: 1px solid #39a2bf;
-}
-
-#item-form input[type=submit]:disabled {
-    background: #97b7c1;
-    border: 1px solid #6299a9;
-}
-
-#inputs input:first-child {
-    margin-left: 0;
-}
-
-#inputs div {
-    display: flex;
-    margin-bottom: 4px;
-}
-
-#date-price input[type=submit]{
-    width: 50%;
-}
-
-#name-meta input[type=submit]{
+#sidebar-state {
     display: none;
 }
 
-#id_date {
-    width: 7em!important;
+#overlay {
+    z-index: 100;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.1);
 }
 
-#id_price {
-    text-align: right!important;
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
-@media (max-width: 480px){
-    #date-price input[type=submit]{
-        display: none;
-    }
-
-    #name-meta {
-        flex-wrap: wrap;
-    }
-
-    #id_meta {
-        margin-left: 0!important;
-        width: calc(65% - 2px)!important;
-        margin-right: 2px;
-    }
-
-    #id_name {
-        margin-bottom: 4px;
-    }
-
-    #name-meta input[type=submit]{
-        display: initial;
-        width: calc(35% - 2px);
-        margin-left: 2px;
-    }
+.spinner {
+    position: fixed;
+    width: 32px;
+    height: 32px;
+    top: calc(50% - 16px);
+    left: calc(50% - 16px);
+    border: 8px solid transparent;
+    border-radius: 50%;
+    border-top-color: #286d81;
+    animation: spin 2s infinite linear;
 }
 
+#show-menu:active {
+    background: #dbdbdb;
+}
+
+#show-menu:focus {
+    outline: none;
+}
+
+#sidebar-content {
+    z-index: 20;
+    padding: 6px;
+    box-sizing: border-box;
+    background: #fff;
+    border-right: 1px solid #707070;
+    position: fixed;
+    width: 80%;
+    top: 0;
+    bottom: 0;
+    left: -80%;
+    transition: 0.3s ease left;
+    overflow-y: auto;
+}
+
+#sidebar-overlay {
+    visibility: hidden;
+    opacity: 0;
+    z-index: 10;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    transition: 0.2s ease opacity, 0.2s ease visibility;
+}
+
+#sidebar-state:checked + #sidebar > #sidebar-overlay {
+    visibility: visible;
+    opacity: 1;
+}
+
+#sidebar-state:checked + #sidebar > #sidebar-content {
+    left: 0;
+}
+
+#main {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+#title {
+    background: #fff;
+    box-sizing: border-box;
+    border-bottom: 1px solid #bfbfbf;
+    text-align: center;
+}
+
+#sticky-date {
+    padding: 10px;
+}
+
+#show-menu {
+    float: left;
+    font-size: 36px;
+    line-height: 22px;
+    padding: 10px;
+    border-right: 1px solid #bfbfbf;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#content {
+    overflow: auto;
+}
+
+/* Item form ---------------------------------------------------------------- */
+#item-form {
+    padding: 6px;
+}
 
 /* Items area --------------------------------------------------------------- */
 #items {
@@ -98,34 +138,30 @@ body {
 }
 
 .date {
-    outline: 1px solid #ddd;
-    border-bottom: 1px solid #bfbfbf;
+    border: 1px solid #bfbfbf;
     background: white;
     margin-bottom: 6px;
-    display: flex;
 }
 
 .date:last-child {
     margin-bottom: 0;
 }
 
-.left {
-    position: relative;
-    min-width: 8em;
+.date-head {
     text-align: center;
-    padding: 8px;
-    margin-bottom: auto;
+    padding: 6px;
+    border-bottom: 1px solid #ddd;
 }
 
 .date ul {
     margin: 0;
     padding: 0;
     list-style-type: none;
-    width: calc(100% - 8em);
+    width: 100%;
 }
 
 .date ul li {
-    display: flex;
+    display: block;
     padding: 8px;
 }
 
@@ -134,9 +170,9 @@ body {
 }
 
 .price {
+    float: right;
     text-align: right;
-    min-width: 8em;
-    margin-right: 6px;
+    margin-left: 8px;
 }
 
 .name {
@@ -150,92 +186,41 @@ body {
     font-style: italic;
 }
 
-.positive {
-    color: #059c00;
-}
-
-.sticked .left {
-    background: #fff;
-    position: fixed;
-    top: 0;
-}
-
-.sticked ul {
-    margin-left: calc(8em + 16px);
-}
-
-.sticked.absolute .left {
-    position: absolute;
-}
-
-@media (max-width: 800px){
-    .left {
-        padding: 8px;
-        border-top: 1px solid #bfbfbf;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .date {
-        flex-direction: column;
-    }
-
-    .date ul {
-        width: 100%;
-    }
-
-    .date ul li {
-        display: block;
-    }
-
-    .price {
-        float: right;
-        min-width: initial;
-        margin-left: 4px;
-        margin-right: 0;
-    }
-
-    .sticked ul {
-        margin-left: 0;
-    }
-
-    .sticked .left{
-        left: 6px;
-        right: 6px;
-    }
-}
-
-/* Loader animation --------------------------------------------------------- */
+/* Classes ------------------------------------------------------------------ */
 .numeric {
     font-family: "Lucida Console", Monaco, monospace;
 }
 
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+.positive {
+    color: #059c00;
 }
 
-#overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background: rgba(0, 0, 0, 0.1);
+#item-form {
+    display: flex;
+    flex-direction: column;
 }
 
-.loading {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 32px;
-    height: 32px;
-    border: 8px solid transparent;
-    border-radius: 50%;
-    border-top-color: #286d81;
-    animation: spin 2s infinite linear;
+#item-form input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px;
+    border: 1px solid #bbb;
+    font-size: 14pt;
+}
+
+#item-form input[type=submit] {
+    background: #39a2bf;
+    color: #fff;
+    border: 1px solid #286d81;
+    outline: none;
+}
+
+#item-form input[type=submit]:active {
+    background: #286d81;
+    border: 1px solid #39a2bf;
+}
+
+#item-form input[type=submit]:disabled {
+    background: #97b7c1;
+    border: 1px solid #6299a9;
 }
