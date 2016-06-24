@@ -7,7 +7,7 @@ than to choose one.
 
 1.  Get a Python 3 environment
 
-    The project is developed in 3.5.1 but I think it should work on 
+    The project is developed in 3.5.1 but I think it should work with
     any 3.x version.
     
 2.  Install dependencies:
@@ -21,7 +21,7 @@ than to choose one.
     in your settings file like this:
     
     ```
-    from wimm.settings import *
+    from wimm.dev_settings import *
     
     DEBUG = False
     SECRET_KEY = 'some secret'

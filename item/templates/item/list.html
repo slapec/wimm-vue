@@ -8,15 +8,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>WIMM</title>
     <link rel="stylesheet" type="text/css" href="{% static 'item/list/css/list.css' %}">
     <script type="text/javascript" src="{% static 'jquery/js/jquery-2.2.4.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'item/list/js/list.js' %}"></script>
 </head>
 <body>
-    <div id="overlay">
-        <div class="spinner"></div>
-    </div>
+    <div id="loading-overlay"><div class="spinner"></div></div>
 
     <input type="checkbox" id="sidebar-state">
 
@@ -29,23 +28,21 @@
         <label id="sidebar-overlay" for="sidebar-state"></label>
     </div>
 
-    <div id="main">
-        <div id="title">
-            <label id="show-menu" for="sidebar-state">&equiv;</label>
-            <div id="sticky-date">{% trans 'WIMM' %}</div>
-        </div>
+    <div id="title">
+        <label id="show-menu" for="sidebar-state">&equiv;</label>
+        <div id="title-content">{% trans 'WIMM' %}</div>
+    </div>
 
-        <div id="content">
-            <form id="item-form">
-                {% csrf_token %}
-                {{ form.date }}
-                {{ form.price }}
-                {{ form.name }}
-                {{ form.meta }}
-                <input type="submit" tabindex="-1">
-            </form>
-            <div id="items"></div>
-        </div>
+    <div id="content">
+        <form id="item-form">
+            {% csrf_token %}
+            {{ form.date }}
+            {{ form.price }}
+            {{ form.name }}
+            {{ form.meta }}
+            <input type="submit" id="id_submit">
+        </form>
+        <div id="items"></div>
     </div>
 </body>
 </html>

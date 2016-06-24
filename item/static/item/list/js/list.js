@@ -7,9 +7,9 @@
 
         this.media = window.matchMedia('(max-width: 800px)');
 
-        window.addEventListener('resize', function(){
-            self.cache();
-        })
+        // window.addEventListener('resize', function(){
+        //     self.cache();
+        // })
     }
 
     StickyService.prototype.cache = function(){
@@ -209,7 +209,7 @@
     };
 
     // ------------------------------------------------------------------------
-    var overlay, form, price, date, items, dateService, stickyService;
+    var sidebarState, loadingOverlay, form, price, date, items, dateService, stickyService;
 
     function resetForm(){
         var lastDate = date.val();
@@ -249,7 +249,8 @@
         // Setting up the UI ---------------------------------------------------
         stickyService = new StickyService();
 
-        overlay = $('#overlay');
+        sidebarState = $('#sidebar-state');
+        loadingOverlay = $('#loading-overlay');
         form = $('#item-form');
         price = $('#id_price');
         date = $('#id_date');
@@ -258,6 +259,22 @@
         price.focus();
 
         // Attaching handlers --------------------------------------------------
+        var scrollBefore = null;
+        sidebarState.on('change', function(){
+            var body = $(document.body);
+
+            if(this.checked){
+                scrollBefore = $(window).scrollTop();
+                body.css({top: -1 * scrollBefore + 'px'});
+                body.addClass('overflow');
+            }
+            else {
+                body.css({top: ''});
+                body.removeClass('overflow');
+                $(window).scrollTop(scrollBefore);
+            }
+        });
+
         form.on('submit', function(e){
             e.preventDefault();
             var data = form.serializeArray().reduce(function(result, obj){
@@ -283,12 +300,12 @@
         });
 
         items.on('loadPage.start', function(){
-            overlay.show();
+            loadingOverlay.show();
         });
 
         items.on('loadPage.end', function(){
             // stickyService.cache();
-            overlay.hide();
+            loadingOverlay.hide();
         });
 
         window.addEventListener('scroll', function(){
