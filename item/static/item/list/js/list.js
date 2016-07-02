@@ -209,7 +209,7 @@
     };
 
     // ------------------------------------------------------------------------
-    var sidebarState, loadingOverlay, form, price, date, items, dateService, stickyService;
+    var sidebarState, loadingOverlay, media, form, price, date, items, dateService, stickyService;
 
     function resetForm(){
         var lastDate = date.val();
@@ -248,6 +248,7 @@
     $(function(){
         // Setting up the UI ---------------------------------------------------
         stickyService = new StickyService();
+        media = window.matchMedia('(min-width: 1280px)');
 
         sidebarState = $('#sidebar-state');
         loadingOverlay = $('#loading-overlay');
@@ -272,6 +273,18 @@
                 body.css({top: ''});
                 body.removeClass('overflow');
                 $(window).scrollTop(scrollBefore);
+            }
+        });
+
+        media.addListener(function(){
+            if(sidebarState.prop('checked')){
+                var body = $(document.body);
+                body.css({top: ''});
+                body.removeClass('overflow');
+                if(scrollBefore){
+                    $(window).scrollTop(scrollBefore);
+                }
+                sidebarState.prop('checked', false);
             }
         });
 

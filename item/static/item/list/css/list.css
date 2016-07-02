@@ -273,3 +273,27 @@ body {
         order: 3
     }
 }
+
+@media (min-width: 1280px){
+    #show-menu {
+        display: none;
+    }
+
+    #sidebar-overlay {
+        display: none;
+    }
+
+    #sidebar-content {
+        transform: initial;
+    }
+
+    #title {
+        transition: 0.3s ease left;
+        left: 330px
+    }
+
+    #content {
+        transition: 0.3s ease margin-left;
+        margin-left: 330px;
+    }
+}
