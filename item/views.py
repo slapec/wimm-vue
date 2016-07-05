@@ -3,11 +3,11 @@
 import datetime
 from itertools import groupby
 
-from django.core.paginator import Paginator
+from dateutil.relativedelta import relativedelta
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.utils import timezone
+from django.utils import timezone, formats
 from django.views.generic import View, RedirectView
 
 from item.forms import ItemForm
@@ -18,7 +18,7 @@ class RedirectToMonth(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         today = timezone.now().date()
 
-        return reverse('item-list', args=[str(today.year), str(today.month).zfill(2)])
+        return reverse('item-list', args=(str(today.year), str(today.month).zfill(2)))
 
 
 class ItemList(View):
@@ -53,12 +53,26 @@ class ItemList(View):
         date = datetime.date(int(year), int(month), 1)
 
         if request.is_ajax():
+            next_ = date + relativedelta(months=1)
+            previous = date - relativedelta(months=1)
+
             qs = self.get_queryset(date)
-            return JsonResponse(self.serialize(qs), safe=False)
+
+            page = {
+                'title': formats.date_format(date, 'Y / F'),
+                'items': self.serialize(qs),
+                'pages': {
+                    'next': reverse('item-list', args=(str(next_.year), str(next_.month).zfill(2))),
+                    'current': reverse('item-list', args=(year, month)),
+                    'previous': reverse('item-list', args=(str(previous.year), str(previous.month).zfill(2)))
+                }
+            }
+
+            return JsonResponse(page, safe=False)
         else:
             return render(request, 'item/list.html', {
                 'date': date,
-                'form': self.form,
+                'form': self.form
             })
 
     def post(self, request, *args, **kwargs):

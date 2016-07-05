@@ -1,94 +1,4 @@
 (function(){
-    function StickyService(){
-        var self = this;
-
-        this.dateElems = [];
-        this.sticked = null;
-
-        this.media = window.matchMedia('(max-width: 800px)');
-
-        // window.addEventListener('resize', function(){
-        //     self.cache();
-        // })
-    }
-
-    StickyService.prototype.cache = function(){
-        console.log('cache');
-
-        var sticked = this.sticked;
-        if(sticked){
-            sticked.date.classList.remove('sticked');
-            this.sticked = null;
-        }
-
-        this.dateElems = [];
-
-        var dateElems = document.getElementsByClassName('date');
-        for(var i=0; i<dateElems.length; i++){
-            var elem = dateElems[i];
-
-            var items = elem.getElementsByTagName('li');
-            var dateHead = elem.getElementsByClassName('date-head')[0];
-
-            this.dateElems.push({
-                date: elem,
-                left: left,
-                leftHeight: left.getBoundingClientRect().height,
-                absolute: items[items.length - 1]
-            });
-        }
-        this.stick();
-    };
-
-    StickyService.prototype.stick = function(){
-        var media = this.media;
-        var elems = this.dateElems;
-        var sticked = this.sticked;
-
-        var lastInvisible = null;
-
-        for(var i=0; i<elems.length; i++){
-            var elem =  elems[i];
-
-            // var bounds = elem.date.getBoundingClientRect();
-            var bounds = elem.date.offsetTop - document.body.scrollTop;
-            if(bounds <= 0){
-                lastInvisible = elem;
-            }
-            else {
-                break;
-            }
-        }
-
-        if(lastInvisible){
-            var absoluteBounds = lastInvisible.absolute.getBoundingClientRect();
-            if(absoluteBounds.bottom <= lastInvisible.leftHeight){
-                lastInvisible.date.classList.add('absolute');
-                lastInvisible.left.style.top = lastInvisible.absolute.offsetTop + 'px';
-            }
-            else {
-                lastInvisible.date.classList.remove('absolute');
-                lastInvisible.left.style.removeProperty('top');
-            }
-        }
-
-        if(lastInvisible !== sticked){
-            if(sticked !== null){
-                sticked.date.classList.remove('sticked', 'absolute');
-                sticked.left.style.removeProperty('top');
-                sticked.date.style.paddingTop = '0px';
-                this.sticked = null;
-            }
-            if(lastInvisible){
-                if(media.matches){
-                    lastInvisible.date.style.paddingTop = lastInvisible.left.getBoundingClientRect().height + 'px';
-                }
-                lastInvisible.date.classList.add('sticked');
-                this.sticked = lastInvisible;
-            }
-        }
-    };
-
     function DateService(target){
         this.target = target;
         this.dates = {};
@@ -168,22 +78,19 @@
         });
     };
 
-    DateService.prototype.loadPage = function(from){
+    DateService.prototype.loadPage = function(url){
         var self = this;
         self.target.trigger('loadPage.start');
 
-        var query = {};
-
-        if(from !== undefined){
-            query.from = from;
-        }
-
-        $.get($.param(query))
+        $.get(url)
         .success(function(reply){
-            reply.forEach(function(dateItems){
+            self.target.empty();
+            self.dates = {};
+
+            reply.items.forEach(function(dateItems){
                 self.createDate(dateItems);
             });
-            self.target.trigger('loadPage.end');
+            self.target.trigger('loadPage.end', reply);
         })
     };
 
@@ -209,7 +116,8 @@
     };
 
     // ------------------------------------------------------------------------
-    var sidebarState, loadingOverlay, media, form, price, date, items, dateService, stickyService;
+    var sidebarState, loadingOverlay, media, form, price, date, items, dateService,
+        previousMonth, nextMonth, titleContent;
 
     function resetForm(){
         var lastDate = date.val();
@@ -247,7 +155,6 @@
 
     $(function(){
         // Setting up the UI ---------------------------------------------------
-        stickyService = new StickyService();
         media = window.matchMedia('(min-width: 1280px)');
 
         sidebarState = $('#sidebar-state');
@@ -256,10 +163,25 @@
         price = $('#id_price');
         date = $('#id_date');
         items = $('#items');
+        previousMonth = $('#previous-month');
+        nextMonth = $('#next-month');
+        titleContent = $('#title-content');
 
         price.focus();
 
         // Attaching handlers --------------------------------------------------
+        media.addListener(function(){
+            if(sidebarState.prop('checked')){
+                var body = $(document.body);
+                body.css({top: ''});
+                body.removeClass('overflow');
+                if(scrollBefore){
+                    $(window).scrollTop(scrollBefore);
+                }
+                sidebarState.prop('checked', false);
+            }
+        });
+
         var scrollBefore = null;
         sidebarState.on('change', function(){
             var body = $(document.body);
@@ -273,18 +195,6 @@
                 body.css({top: ''});
                 body.removeClass('overflow');
                 $(window).scrollTop(scrollBefore);
-            }
-        });
-
-        media.addListener(function(){
-            if(sidebarState.prop('checked')){
-                var body = $(document.body);
-                body.css({top: ''});
-                body.removeClass('overflow');
-                if(scrollBefore){
-                    $(window).scrollTop(scrollBefore);
-                }
-                sidebarState.prop('checked', false);
             }
         });
 
@@ -305,7 +215,6 @@
                 dateService.createDate(details);
                 enableInputs();
                 price.focus();
-                stickyService.cache();
             })
             .error(function(){
                enableInputs();
@@ -316,18 +225,38 @@
             loadingOverlay.show();
         });
 
-        items.on('loadPage.end', function(){
-            // stickyService.cache();
+        items.on('loadPage.end', function(e, reply){
+            previousMonth.data('url', reply.pages.previous);
+            nextMonth.data('url', reply.pages.next);
+            titleContent.html(reply.title);
+
             loadingOverlay.hide();
         });
+        
+        nextMonth.on('click', function(){
+            dateService.loadPage(nextMonth.data('url'));
 
-        window.addEventListener('scroll', function(){
-            // stickyService.stick();
+            items.one('loadPage.end', function(e, reply){
+                var current = reply.pages.current;
+                history.pushState(current, '', current);
+            });
         });
+
+        previousMonth.on('click', function(){
+            dateService.loadPage(previousMonth.data('url'));
+
+            items.one('loadPage.end', function(e, reply){
+                var current = reply.pages.current;
+                history.pushState(current, '', current);
+            });
+        });
+
+        window.onpopstate = function(event){
+            dateService.loadPage(event.state);
+        };
 
         // ---------------------------------------------------------------------
         dateService = new DateService(items);
         dateService.loadPage();
     });
 })();
-

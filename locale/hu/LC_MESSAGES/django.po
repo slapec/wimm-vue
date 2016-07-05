@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-04 17:38+0000\n"
+"POT-Creation-Date: 2016-07-05 19:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,25 +17,33 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: item/forms.py:12
+#: item/forms.py:14
 msgid "Date"
 msgstr "Dátum"
 
-#: item/forms.py:13
+#: item/forms.py:19
 msgid "Price"
 msgstr "Összeg"
 
-#: item/forms.py:14
+#: item/forms.py:23
 msgid "Item name"
 msgstr "Tétel neve"
 
-#: item/forms.py:15
+#: item/forms.py:24
 msgid "Meta"
 msgstr "Meta információ"
 
+#: item/forms.py:31
+msgid "Entered date cannot be in the future."
+msgstr "A dátum nem lehet a jövőben."
+
+#: item/forms.py:39
+msgid "Zero is not allowed."
+msgstr ""
+
 #: item/models.py:6
-msgid "created at"
-msgstr "Létrehozva"
+msgid "date"
+msgstr ""
 
 #: item/models.py:8
 msgid "name"
