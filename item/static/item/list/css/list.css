@@ -42,14 +42,6 @@ body {
     animation: spin 2s infinite linear;
 }
 
-#show-menu:active {
-    background: #dbdbdb;
-}
-
-#show-menu:focus {
-    outline: none;
-}
-
 #sidebar-content {
     z-index: 20;
     position: fixed;
@@ -101,16 +93,35 @@ body {
 
 #title-content {
     padding: 10px;
+    text-transform: uppercase;
+}
+
+.title-button {
+    font-size: 26px;
+    line-height: 22px;
+    padding: 10px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+    width: 42px;
+}
+
+.title-button:active {
+    background: #dbdbdb;
+}
+
+.title-button:focus {
+    outline: none;
 }
 
 #show-menu {
     float: left;
-    font-size: 36px;
-    line-height: 22px;
-    padding: 10px;
     border-right: 1px solid #bfbfbf;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+}
+
+.month-button {
+    float: right;
+    border-left: 1px solid #bfbfbf;
 }
 
 #content {
@@ -251,6 +262,13 @@ body {
 #id_submit {
     width: 40%!important;
     order: 5
+}
+
+#pages {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
 @media (min-width: 480px){
