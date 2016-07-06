@@ -47,35 +47,37 @@
         var target = self.target[0];
         var date = dateItems.date;
 
-        var dateObject = self.dates[date];
-        if(dateObject === undefined){
-            var dateElem = document.createElement('div');
-            dateElem.className = 'date';
-            dateElem.dataset.date = date;
+        if(date !== undefined){
+            var dateObject = self.dates[date];
+            if(dateObject === undefined){
+                var dateElem = document.createElement('div');
+                dateElem.className = 'date';
+                dateElem.dataset.date = date;
 
-            var dateBefore = self.dateBefore(date);
-            target.insertBefore(dateElem, dateBefore);
+                var dateBefore = self.dateBefore(date);
+                target.insertBefore(dateElem, dateBefore);
 
-            var left = document.createElement('div');
-            left.className = 'numeric date-head';
-            left.innerHTML = date;
-            dateElem.appendChild(left);
+                var left = document.createElement('div');
+                left.className = 'numeric date-head';
+                left.innerHTML = date;
+                dateElem.appendChild(left);
 
-            var dateItemsElem = document.createElement('ul');
-            dateItems.className = 'date-items';
-            dateElem.appendChild(dateItemsElem);
+                var dateItemsElem = document.createElement('ul');
+                dateItems.className = 'date-items';
+                dateElem.appendChild(dateItemsElem);
 
-            dateObject = {
-                dateElem: dateElem,
-                dateItemsElem: dateItemsElem
-            };
+                dateObject = {
+                    dateElem: dateElem,
+                    dateItemsElem: dateItemsElem
+                };
 
-            self.dates[date] = dateObject;
+                self.dates[date] = dateObject;
+            }
+
+            dateItems.items.forEach(function(details){
+                self.createItem(dateObject.dateItemsElem, details);
+            });
         }
-
-        dateItems.items.forEach(function(details){
-            self.createItem(dateObject.dateItemsElem, details);
-        });
     };
 
     DateService.prototype.loadPage = function(url){
@@ -226,6 +228,7 @@
         });
 
         items.on('loadPage.end', function(e, reply){
+            date.val(reply.initial);
             previousMonth.data('url', reply.pages.previous);
             nextMonth.data('url', reply.pages.next);
             titleContent.html(reply.title);

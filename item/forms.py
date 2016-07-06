@@ -24,14 +24,6 @@ class ItemForm(forms.ModelForm):
             'meta': forms.TextInput(attrs={'placeholder': _('Meta'), 'tabindex': 4})
         }
 
-    def clean_date(self):
-        date = self.cleaned_data['date']
-
-        if date > self.initial['date']:
-            raise ValidationError(_('Entered date cannot be in the future.'))
-
-        return date
-
     def clean_price(self):
         price = self.cleaned_data['price']
 
