@@ -92,8 +92,11 @@ body {
 }
 
 #title-content {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: -1;
     padding: 10px;
-    text-transform: uppercase;
 }
 
 .title-button {
@@ -277,12 +280,12 @@ body {
     }
 
     #id_name {
-        width: calc(50% - 2px)!important;
+        width: calc(40% - 2px)!important;
         order: 4
     }
 
     #id_meta {
-        width: calc(50% - 2px)!important;
+        width: calc(60% - 2px)!important;
         order: 5
     }
 

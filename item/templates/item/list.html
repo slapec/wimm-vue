@@ -28,9 +28,9 @@
 
     <div id="title">
         <label id="show-menu" for="sidebar-state" class="fa fa-bars title-button"></label>
-        <span id="next-month" class="fa fa-chevron-right title-button month-button"></span>
-        <span id="previous-month" class="fa fa-chevron-left title-button month-button"></span>
-        <div id="title-content">{{ date|date:'Y - F' }}</div>
+        <span id="previous-month" class="fa fa-chevron-right title-button month-button"></span>
+        <span id="next-month" class="fa fa-chevron-left title-button month-button"></span>
+        <div id="title-content"></div>
     </div>
 
     <div id="content">
@@ -40,7 +40,7 @@
             {{ form.price }}
             {{ form.name }}
             {{ form.meta }}
-            <input type="submit" id="id_submit">
+            <input type="submit" id="id_submit" value="{% trans 'Add' %}">
         </form>
         <div id="items"></div>
     </div>

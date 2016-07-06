@@ -3,11 +3,11 @@
 import datetime
 from itertools import groupby
 
-from django.core.paginator import Paginator
+from dateutil.relativedelta import relativedelta
 from django.core.urlresolvers import reverse
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.utils import timezone
+from django.utils import timezone, formats
 from django.views.generic import View, RedirectView
 
 from item.forms import ItemForm
@@ -18,7 +18,7 @@ class RedirectToMonth(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         today = timezone.now().date()
 
-        return reverse('item-list', args=[str(today.year), str(today.month).zfill(2)])
+        return reverse('item-list', args=(str(today.year), str(today.month).zfill(2)))
 
 
 class ItemList(View):
@@ -45,30 +45,55 @@ class ItemList(View):
     def get_queryset(self, date):
         return Item.objects.filter(date__year=date.year, date__month=date.month)
 
-    def dispatch(self, request, *args, **kwargs):
-        self.form = ItemForm(request.POST or None, initial={'date': timezone.now().date()})
-        return super().dispatch(request, *args, **kwargs)
+    def dispatch(self, request, *args, year, month, **kwargs):
+        self.date = datetime.date(int(year), int(month), 1)
+
+        today = timezone.now().date()
+        if self.date.year == today.year and self.date.month == today.month:
+            self.initial_date = today
+        else:
+            self.initial_date = self.date
+
+        self.form = ItemForm(request.POST or None, initial={'date': self.initial_date})
+        return super().dispatch(request, *args, year, month, **kwargs)
 
     def get(self, request, year, month):
-        date = datetime.date(int(year), int(month), 1)
-
         if request.is_ajax():
-            qs = self.get_queryset(date)
-            return JsonResponse(self.serialize(qs), safe=False)
+            next_ = self.date + relativedelta(months=1)
+            previous = self.date - relativedelta(months=1)
+
+            qs = self.get_queryset(self.date)
+
+            page = {
+                'initial': self.initial_date,
+                'title': formats.date_format(self.date, 'Y / F'),
+                'items': self.serialize(qs),
+                'pages': {
+                    'next': reverse('item-list', args=(str(next_.year), str(next_.month).zfill(2))),
+                    'current': reverse('item-list', args=(year, month)),
+                    'previous': reverse('item-list', args=(str(previous.year), str(previous.month).zfill(2)))
+                }
+            }
+
+            return JsonResponse(page, safe=False)
         else:
             return render(request, 'item/list.html', {
-                'date': date,
-                'form': self.form,
+                'date': self.date,
+                'form': self.form
             })
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request, year, month):
         form = self.form
 
         if form.is_valid():
             item = self.form.save()
-            return JsonResponse({
-                'date': item.date,
-                'items': [self._serialize_item(item)]
-            })
+            if item.date.year == self.date.year and item.date.month == self.date.month:
+                result = {
+                    'date': item.date,
+                    'items': [self._serialize_item(item)]
+                }
+            else:
+                result = {}
+            return JsonResponse(result, safe=False)
         else:
             raise NotImplementedError(form.errors)
