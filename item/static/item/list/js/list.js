@@ -80,7 +80,7 @@
 
     DateService.prototype.loadPage = function(url){
         var self = this;
-        self.target.trigger('loadPage.start');
+        self.target.trigger('loadPage.start', url);
 
         $.get(url)
         .success(function(reply){
@@ -229,8 +229,11 @@
             previousMonth.data('url', reply.pages.previous);
             nextMonth.data('url', reply.pages.next);
             titleContent.html(reply.title);
-
             loadingOverlay.hide();
+        });
+
+        items.one('loadPage.end', function(e, reply){
+            document.title = 'WIMM - ' + reply.title;
         });
         
         nextMonth.on('click', function(){
@@ -239,6 +242,7 @@
             items.one('loadPage.end', function(e, reply){
                 var current = reply.pages.current;
                 history.pushState(current, '', current);
+                document.title = 'WIMM - ' + reply.title;
             });
         });
 
@@ -248,6 +252,7 @@
             items.one('loadPage.end', function(e, reply){
                 var current = reply.pages.current;
                 history.pushState(current, '', current);
+                document.title = 'WIMM - ' + reply.title;
             });
         });
 
