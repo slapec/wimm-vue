@@ -31,3 +31,7 @@ class ItemForm(forms.ModelForm):
             raise ValidationError(_('Zero is not allowed.'))
 
         return price
+
+
+class ItemDeleteForm(forms.Form):
+    pass

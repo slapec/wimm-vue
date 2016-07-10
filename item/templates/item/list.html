@@ -15,14 +15,24 @@
     <link rel="stylesheet" type="text/css" href="{% static 'item/list/css/list.css' %}">
     <script type="text/javascript" src="{% static 'jquery/js/jquery-2.2.4.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'item/list/js/list.js' %}"></script>
+    <script type="application/json" id="options">
+        {
+            "csrftoken": "{{ csrf_token }}",
+            "urls": {
+                "itemApi": "{% url 'item-api' date.year date.month|stringformat:'02d' %}"
+            }
+        }
+    </script>
 </head>
 <body>
     <div id="loading-overlay"><div class="spinner"></div></div>
 
-    <input type="checkbox" id="sidebar-state">
+    <input type="checkbox" id="sidebar-state" class="state-checkbox">
 
     <div id="sidebar">
-        <div id="sidebar-content"></div>
+        <div id="sidebar-content">
+            <label for="select-delete-toolbar-state" id="select-delete" class="sidebar-button">{% trans 'Select and delete' %}</label>
+        </div>
         <label id="sidebar-overlay" for="sidebar-state"></label>
     </div>
 
@@ -44,5 +54,13 @@
         </form>
         <div id="items"></div>
     </div>
+
+    <input type="checkbox" id="select-delete-toolbar-state" class="state-checkbox">
+    <div id="select-delete-toolbar" class="toolbar">
+        <label for="select-delete-toolbar-state" id="selected-delete" class="toolbar-button">{% trans 'Delete selected' %}</label>
+        <label for="select-delete-toolbar-state" id="selected-cancel" class="toolbar-button">{% trans 'Cancel' %}</label>
+    </div>
+
+    <div id="wimm">WIMM</div>
 </body>
 </html>
