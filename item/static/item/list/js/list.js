@@ -299,17 +299,24 @@
             });
         });
 
-        selectDelete.on('click', function(){
-            resetBody();
-            sidebarState.prop('checked', false);
-            titleButtons.hide();
-            $('.item-select').show();
+        selectDelete.on('click', function(e){
+            if(!selectDelete.hasClass('toggled')){
+                selectDelete.addClass('toggled');
+                resetBody();
+                sidebarState.prop('checked', false);
+                titleButtons.hide();
+                $('.item-select').show();
+            }
+            else {
+                return false;
+            }
         });
 
         selectedCancel.on('click', function(){
             titleButtons.removeAttr('style');
             $('.item-select').prop('checked', false).hide();
             $('.item-checked').removeClass('item-checked');
+            selectDelete.removeClass('toggled');
         });
 
         selectedDelete.on('click', function(){
@@ -331,6 +338,7 @@
             $('.item-select').prop('checked', false).hide();
             $('.item-checked').removeClass('item-checked');
             loadingOverlay.show();
+            selectDelete.removeClass('toggled');
         });
 
         window.onpopstate = function(event){
