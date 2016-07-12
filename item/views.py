@@ -1,10 +1,12 @@
 # coding: utf-8
 
 import datetime
+import json
 from itertools import groupby
 
 from dateutil.relativedelta import relativedelta
 from django.core.urlresolvers import reverse
+from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils import timezone, formats
@@ -107,7 +109,15 @@ class ItemApi(View):
             raise NotImplementedError(form.errors)
 
     def delete(self, request, year, month):
-        form = ItemDeleteForm()
+        date = datetime.date(int(year), int(month), 1)
+
+        form = ItemDeleteForm(json.loads(request.body.decode()), date=date)
+        if form.is_valid():
+            with transaction.atomic():
+                form.cleaned_data['items'].delete()
+                return JsonResponse(reverse('item-api', args=(year, month)), safe=False)
+        else:
+            raise NotImplementedError(form.errors)
 
 
 class ItemList(View):

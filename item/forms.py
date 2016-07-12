@@ -34,4 +34,10 @@ class ItemForm(forms.ModelForm):
 
 
 class ItemDeleteForm(forms.Form):
-    pass
+    items = forms.ModelMultipleChoiceField(queryset=Item.objects.none())
+
+    def __init__(self, *args, date, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['items'].queryset = Item.objects.filter(created_at__year=date.year,
+                                                            created_at__month=date.month)

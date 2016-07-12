@@ -319,6 +319,16 @@ body {
     border-right: 1px solid #ddd;
     text-align: center;
     width: 100%;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+}
+
+.toolbar-button:active {
+    background: #dbdbdb;
+}
+
+.toolbar-button:focus {
+    outline: none;
 }
 
 .toolbar-button:last-child {

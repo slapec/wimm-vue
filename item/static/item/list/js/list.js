@@ -268,6 +268,7 @@
         });
 
         items.on('loadPage.end', function(e, reply){
+            options.urls.itemApi = reply.pages.current.api;
             date.val(reply.initial);
             previousMonth.data('url', reply.pages.previous.api);
             nextMonth.data('url', reply.pages.next.api);
@@ -328,10 +329,13 @@
             $.ajax({
                 method: 'DELETE',
                 url: options.urls.itemApi,
-                data: $.param({items: selected})
+                data: JSON.stringify({items: selected})
             })
             .success(function(reply){
-                dateService.loadPage(reply.url);
+                dateService.loadPage(reply);
+            })
+            .error(function(){
+                loadingOverlay.hide();
             });
 
             titleButtons.removeAttr('style');
