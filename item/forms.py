@@ -31,3 +31,13 @@ class ItemForm(forms.ModelForm):
             raise ValidationError(_('Zero is not allowed.'))
 
         return price
+
+
+class ItemDeleteForm(forms.Form):
+    items = forms.ModelMultipleChoiceField(queryset=Item.objects.none())
+
+    def __init__(self, *args, date, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields['items'].queryset = Item.objects.filter(date__year=date.year,
+                                                            date__month=date.month)

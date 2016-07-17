@@ -6,7 +6,30 @@
 
     DateService.prototype.createItem = function(dateItemsElem, details){
         var itemElem = document.createElement('li');
+        var jItemElem = $(itemElem);
         dateItemsElem.insertBefore(itemElem, dateItemsElem.firstChild);
+
+        // select checkbox
+        var selectElem = document.createElement('input');
+        selectElem.type = 'checkbox';
+        selectElem.className = 'item-select';
+        itemElem.appendChild(selectElem);
+        var jSelectElem = $(selectElem);
+        jSelectElem.on('change', function(){
+            if(this.checked){
+                $(itemElem).addClass('item-checked');
+            }
+            else {
+                $(itemElem).removeClass('item-checked');
+            }
+        });
+        jSelectElem.data('id', details.id);
+
+        jItemElem.on('click', function(){
+            if(jSelectElem.is(':visible')){
+                jSelectElem.trigger('click');
+            }
+        });
 
         // Price
         var priceElem = document.createElement('span');
@@ -89,7 +112,7 @@
             self.target.empty();
             self.dates = {};
 
-            reply.items.forEach(function(dateItems){
+            reply.dates.forEach(function(dateItems){
                 self.createDate(dateItems);
             });
             self.target.trigger('loadPage.end', reply);
@@ -118,8 +141,9 @@
     };
 
     // ------------------------------------------------------------------------
-    var sidebarState, loadingOverlay, media, form, price, date, items, dateService,
-        previousMonth, nextMonth, titleContent;
+    var titleButtons, sidebarState, loadingOverlay, media, form, price, date, items, dateService,
+        previousMonth, nextMonth, titleContent, selectDelete, selectDeleteToolbar, selectedCancel,
+        selectedDelete;
 
     function resetForm(){
         var lastDate = date.val();
@@ -156,9 +180,24 @@
     }
 
     $(function(){
+        var options = JSON.parse($('#options').html());
+
+        function csrfSafeMethod(method) {
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", options.csrftoken);
+                }
+            }
+        });
+
         // Setting up the UI ---------------------------------------------------
         media = window.matchMedia('(min-width: 1280px)');
 
+        titleButtons = $('.title-button');
         sidebarState = $('#sidebar-state');
         loadingOverlay = $('#loading-overlay');
         form = $('#item-form');
@@ -168,23 +207,31 @@
         previousMonth = $('#previous-month');
         nextMonth = $('#next-month');
         titleContent = $('#title-content');
+        selectDelete = $('#select-delete');
+        selectDeleteToolbar = $('#select-delete-toolbar');
+        selectedCancel = $('#selected-cancel');
+        selectedDelete = $('#selected-delete');
 
         price.focus();
 
         // Attaching handlers --------------------------------------------------
+        var scrollBefore = null;
+        function resetBody(){
+            var body = $(document.body);
+            body.css({top: ''});
+            body.removeClass('overflow');
+            if(scrollBefore){
+                $(window).scrollTop(scrollBefore);
+            }
+        }
+
         media.addListener(function(){
             if(sidebarState.prop('checked')){
-                var body = $(document.body);
-                body.css({top: ''});
-                body.removeClass('overflow');
-                if(scrollBefore){
-                    $(window).scrollTop(scrollBefore);
-                }
+                resetBody();
                 sidebarState.prop('checked', false);
             }
         });
 
-        var scrollBefore = null;
         sidebarState.on('change', function(){
             var body = $(document.body);
 
@@ -211,7 +258,7 @@
 
             enableInputs(false);
 
-            $.post('', data)
+            $.post(options.urls.itemApi, data)
             .success(function(details){
                 resetForm();
                 dateService.createDate(details);
@@ -228,9 +275,10 @@
         });
 
         items.on('loadPage.end', function(e, reply){
+            options.urls.itemApi = reply.pages.current.api;
             date.val(reply.initial);
-            previousMonth.data('url', reply.pages.previous);
-            nextMonth.data('url', reply.pages.next);
+            previousMonth.data('url', reply.pages.previous.api);
+            nextMonth.data('url', reply.pages.next.api);
             titleContent.html(reply.title);
             loadingOverlay.hide();
         });
@@ -243,7 +291,7 @@
             dateService.loadPage(nextMonth.data('url'));
 
             items.one('loadPage.end', function(e, reply){
-                var current = reply.pages.current;
+                var current = reply.pages.current.history;
                 history.pushState(current, '', current);
                 document.title = 'WIMM - ' + reply.title;
             });
@@ -253,10 +301,55 @@
             dateService.loadPage(previousMonth.data('url'));
 
             items.one('loadPage.end', function(e, reply){
-                var current = reply.pages.current;
+                var current = reply.pages.current.history;
                 history.pushState(current, '', current);
                 document.title = 'WIMM - ' + reply.title;
             });
+        });
+
+        selectDelete.on('click', function(e){
+            if(!selectDelete.hasClass('toggled')){
+                selectDelete.addClass('toggled');
+                resetBody();
+                sidebarState.prop('checked', false);
+                titleButtons.hide();
+                $('.item-select').show();
+            }
+            else {
+                return false;
+            }
+        });
+
+        selectedCancel.on('click', function(){
+            titleButtons.removeAttr('style');
+            $('.item-select').prop('checked', false).hide();
+            $('.item-checked').removeClass('item-checked');
+            selectDelete.removeClass('toggled');
+        });
+
+        selectedDelete.on('click', function(){
+            var selected = [];
+            $('.item-select:checked').each(function(i, o){
+                selected.push($(o).data('id'));
+            });
+
+            $.ajax({
+                method: 'DELETE',
+                url: options.urls.itemApi,
+                data: JSON.stringify({items: selected})
+            })
+            .success(function(reply){
+                dateService.loadPage(reply);
+            })
+            .error(function(){
+                loadingOverlay.hide();
+            });
+
+            titleButtons.removeAttr('style');
+            $('.item-select').prop('checked', false).hide();
+            $('.item-checked').removeClass('item-checked');
+            loadingOverlay.show();
+            selectDelete.removeClass('toggled');
         });
 
         window.onpopstate = function(event){
@@ -265,6 +358,6 @@
 
         // ---------------------------------------------------------------------
         dateService = new DateService(items);
-        dateService.loadPage();
+        dateService.loadPage(options.urls.itemApi);
     });
 })();
