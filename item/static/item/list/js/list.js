@@ -312,6 +312,7 @@
         selectDelete.on('click', function(e){
             if(!selectDelete.hasClass('toggled')){
                 selectDelete.addClass('toggled');
+                enableInputs(false);
                 resetBody();
                 sidebarState.prop('checked', false);
                 titleButtons.hide();
@@ -327,6 +328,7 @@
             $('.item-select').prop('checked', false).hide();
             $('.item-checked').removeClass('item-checked');
             selectDelete.removeClass('toggled');
+            enableInputs(true);
         });
 
         selectedDelete.on('click', function(){
@@ -352,6 +354,7 @@
             $('.item-checked').removeClass('item-checked');
             loadingOverlay.show();
             selectDelete.removeClass('toggled');
+            enableInputs(true);
         });
 
         window.onpopstate = function(event){
