@@ -25,9 +25,11 @@
         });
         jSelectElem.data('id', details.id);
 
-        jItemElem.on('click', function(){
-            if(jSelectElem.is(':visible')){
-                jSelectElem.trigger('click');
+        jItemElem.on('click', function(e){
+            if(e.target !== selectElem){
+                if(jSelectElem.is(':visible')){
+                    jSelectElem.trigger('click');
+                }
             }
         });
 
