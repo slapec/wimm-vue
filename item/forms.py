@@ -39,5 +39,5 @@ class ItemDeleteForm(forms.Form):
     def __init__(self, *args, date, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields['items'].queryset = Item.objects.filter(created_at__year=date.year,
-                                                            created_at__month=date.month)
+        self.fields['items'].queryset = Item.objects.filter(date__year=date.year,
+                                                            date__month=date.month)

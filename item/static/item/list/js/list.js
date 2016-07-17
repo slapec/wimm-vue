@@ -6,6 +6,7 @@
 
     DateService.prototype.createItem = function(dateItemsElem, details){
         var itemElem = document.createElement('li');
+        var jItemElem = $(itemElem);
         dateItemsElem.insertBefore(itemElem, dateItemsElem.firstChild);
 
         // select checkbox
@@ -23,6 +24,12 @@
             }
         });
         jSelectElem.data('id', details.id);
+
+        jItemElem.on('click', function(){
+            if(jSelectElem.is(':visible')){
+                jSelectElem.trigger('click');
+            }
+        });
 
         // Price
         var priceElem = document.createElement('span');
@@ -251,7 +258,7 @@
 
             enableInputs(false);
 
-            $.post('', data)
+            $.post(options.urls.itemApi, data)
             .success(function(details){
                 resetForm();
                 dateService.createDate(details);
