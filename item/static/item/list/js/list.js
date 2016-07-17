@@ -143,9 +143,9 @@
     };
 
     // ------------------------------------------------------------------------
-    var titleButtons, sidebarState, loadingOverlay, media, form, price, date, items, dateService,
-        previousMonth, nextMonth, titleContent, selectDelete, selectDeleteToolbar, selectedCancel,
-        selectedDelete;
+    var titleButtons, sidebarState, loadingOverlay, media, form, price, name, meta, date, items,
+        dateService, previousMonth, nextMonth, titleContent, selectDelete, selectDeleteToolbar, 
+        selectedCancel, selectedDelete;
 
     function resetForm(){
         var lastDate = date.val();
@@ -204,6 +204,8 @@
         loadingOverlay = $('#loading-overlay');
         form = $('#item-form');
         price = $('#id_price');
+        name = $('#id_name');
+        meta = $('#id_meta');
         date = $('#id_date');
         items = $('#items');
         previousMonth = $('#previous-month');
@@ -215,6 +217,21 @@
         selectedDelete = $('#selected-delete');
 
         price.focus();
+
+        // UI ------------------------------------------------------------------
+        name.autocomplete({
+            source: options.urls.itemNameAuto,
+            minLength: 1,
+            delay: 100
+        });
+
+        meta.tagEditor({
+            autocomplete: {
+                source: options.urls.itemMetaAuto,
+                minLength: 1,
+                delay: 100
+            }
+        });
 
         // Attaching handlers --------------------------------------------------
         var scrollBefore = null;

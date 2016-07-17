@@ -11,15 +11,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
     <meta name="mobile-web-app-capable" content="yes">
     <title>WIMM</title>
+    <link rel="stylesheet" href="{% static 'jquery-ui/css/jquery-ui.min.css' %}">
     <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'jquery-tageditor/css/jquery.tag-editor.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'item/list/css/list.css' %}">
+
     <script type="text/javascript" src="{% static 'jquery/js/jquery-2.2.4.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'jquery-ui/js/jquery-ui.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'jquery-tageditor/js/jquery.caret.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'jquery-tageditor/js/jquery.tag-editor.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'item/list/js/list.js' %}"></script>
     <script type="application/json" id="options">
         {
             "csrftoken": "{{ csrf_token }}",
             "urls": {
-                "itemApi": "{% url 'item-api' date.year date.month|stringformat:'02d' %}"
+                "itemApi": "{% url 'item-api' date.year date.month|stringformat:'02d' %}",
+                "itemNameAuto": "{% url 'item-name-auto' %}",
+                "itemMetaAuto": "{% url 'item-meta-auto' %}"
             }
         }
     </script>
