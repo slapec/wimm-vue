@@ -152,6 +152,10 @@
 
         form[0].reset();
 
+        meta.tagEditor('getTags')[0].tags.forEach(function(o){
+            meta.tagEditor('removeTag', o);
+        });
+
         date.val(lastDate);
         price.focus();
     }
@@ -230,7 +234,9 @@
                 source: options.urls.itemMetaAuto,
                 minLength: 1,
                 delay: 100
-            }
+            },
+            animateDelete: 0,
+            placeholder: meta.prop('placeholder')
         });
 
         // Attaching handlers --------------------------------------------------

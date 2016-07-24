@@ -77,7 +77,7 @@ body {
 
 .sidebar-button {
     display: block;
-    padding: 8px;
+    padding: 10px;
     border-bottom: 1px solid #ddd;
     margin: 0;
     cursor: pointer;
@@ -304,11 +304,18 @@ body {
     padding: 0 0 0 4px;
     background: #c1e2eb;
     color: #0d333e;
+    border-radius: 0;
 }
 
 .tag-editor .tag-editor-delete {
     background: #c1e2eb;
     color: #0d333e;
+    border-radius: 0;
+    padding: 0 5px 0 5px;
+}
+
+.tag-editor .placeholder {
+    padding: 0;
 }
 
 .tag-editor li {
@@ -382,6 +389,10 @@ body {
 .toggled {
     font-weight: bold;
     background: #dbdbdb;
+}
+
+.ui-autocomplete {
+    font-size: 14pt;
 }
 
 @media (min-width: 480px){
