@@ -143,14 +143,18 @@
     };
 
     // ------------------------------------------------------------------------
-    var titleButtons, sidebarState, loadingOverlay, media, form, price, date, items, dateService,
-        previousMonth, nextMonth, titleContent, selectDelete, selectDeleteToolbar, selectedCancel,
-        selectedDelete;
+    var titleButtons, sidebarState, loadingOverlay, media, form, price, name, meta, date, items,
+        dateService, previousMonth, nextMonth, titleContent, selectDelete, selectDeleteToolbar, 
+        selectedCancel, selectedDelete;
 
     function resetForm(){
         var lastDate = date.val();
 
         form[0].reset();
+
+        meta.tagEditor('getTags')[0].tags.forEach(function(o){
+            meta.tagEditor('removeTag', o);
+        });
 
         date.val(lastDate);
         price.focus();
@@ -204,6 +208,8 @@
         loadingOverlay = $('#loading-overlay');
         form = $('#item-form');
         price = $('#id_price');
+        name = $('#id_name');
+        meta = $('#id_meta');
         date = $('#id_date');
         items = $('#items');
         previousMonth = $('#previous-month');
@@ -215,6 +221,23 @@
         selectedDelete = $('#selected-delete');
 
         price.focus();
+
+        // UI ------------------------------------------------------------------
+        name.autocomplete({
+            source: options.urls.itemNameAuto,
+            minLength: 1,
+            delay: 100
+        });
+
+        meta.tagEditor({
+            autocomplete: {
+                source: options.urls.itemMetaAuto,
+                minLength: 1,
+                delay: 100
+            },
+            animateDelete: 0,
+            placeholder: meta.prop('placeholder')
+        });
 
         // Attaching handlers --------------------------------------------------
         var scrollBefore = null;

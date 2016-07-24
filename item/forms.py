@@ -1,8 +1,11 @@
+# coding: utf-8
+
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import Count
 from django.utils.translation import ugettext_lazy as _
 
-from item.models import Item
+from item.models import Item, TaggedItem
 
 
 class ItemForm(forms.ModelForm):
@@ -41,3 +44,25 @@ class ItemDeleteForm(forms.Form):
 
         self.fields['items'].queryset = Item.objects.filter(date__year=date.year,
                                                             date__month=date.month)
+
+
+class ItemNameAutoForm(forms.Form):
+    term = forms.CharField()
+
+    def clean_term(self):
+        data = self.cleaned_data['term']
+        return [_[0] for _ in
+                Item.objects.filter(name__icontains=data).values_list('name')
+                            .annotate(n=Count('name')).order_by('-n', 'name')
+                ]
+
+
+class ItemMetaAutoForm(forms.Form):
+    term = forms.CharField()
+
+    def clean_term(self):
+        data = self.cleaned_data['term']
+        return [_[0] for _ in
+                TaggedItem.objects.filter(tag__name__icontains=data).values_list('tag__name')
+                                  .annotate(n=Count('tag__name')).order_by('-n', 'tag__name')
+                ]
