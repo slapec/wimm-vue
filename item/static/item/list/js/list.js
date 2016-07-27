@@ -54,17 +54,13 @@
 
         itemElem.appendChild(priceElem);
 
-        // Name
-        var nameElem = document.createElement('span');
-        nameElem.className = 'name';
-        nameElem.innerHTML = details.name;
-        itemElem.appendChild(nameElem);
-
-        // meta
-        var metaElem = document.createElement('span');
-        metaElem.className = 'meta';
-        metaElem.innerHTML = details.meta;
-        itemElem.appendChild(metaElem);
+        // tags
+        details.tags.forEach(function(o){
+            var tagElem = document.createElement('span');
+            tagElem.className = 'item-tag';
+            tagElem.innerHTML = o;
+            itemElem.appendChild(tagElem);
+        });
     };
 
     DateService.prototype.createDate = function(dateItems){
@@ -143,7 +139,7 @@
     };
 
     // ------------------------------------------------------------------------
-    var titleButtons, sidebarState, loadingOverlay, media, form, price, name, meta, date, items,
+    var titleButtons, sidebarState, loadingOverlay, media, form, price, tags, date, items,
         dateService, previousMonth, nextMonth, titleContent, selectDelete, selectDeleteToolbar, 
         selectedCancel, selectedDelete;
 
@@ -152,8 +148,8 @@
 
         form[0].reset();
 
-        meta.tagEditor('getTags')[0].tags.forEach(function(o){
-            meta.tagEditor('removeTag', o);
+        tags.tagEditor('getTags')[0].tags.forEach(function(o){
+            tags.tagEditor('removeTag', o);
         });
 
         date.val(lastDate);
@@ -208,8 +204,7 @@
         loadingOverlay = $('#loading-overlay');
         form = $('#item-form');
         price = $('#id_price');
-        name = $('#id_name');
-        meta = $('#id_meta');
+        tags = $('#id_tags');
         date = $('#id_date');
         items = $('#items');
         previousMonth = $('#previous-month');
@@ -223,20 +218,14 @@
         price.focus();
 
         // UI ------------------------------------------------------------------
-        name.autocomplete({
-            source: options.urls.itemNameAuto,
-            minLength: 1,
-            delay: 100
-        });
-
-        meta.tagEditor({
+        tags.tagEditor({
             autocomplete: {
-                source: options.urls.itemMetaAuto,
+                source: options.urls.itemTagsAuto,
                 minLength: 1,
                 delay: 100
             },
             animateDelete: 0,
-            placeholder: meta.prop('placeholder')
+            placeholder: tags.prop('placeholder')
         });
 
         // Attaching handlers --------------------------------------------------

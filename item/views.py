@@ -12,7 +12,7 @@ from django.shortcuts import render
 from django.utils import timezone, formats
 from django.views.generic import View, RedirectView
 
-from item.forms import ItemForm, ItemDeleteForm, ItemNameAutoForm, ItemMetaAutoForm
+from item.forms import ItemForm, ItemDeleteForm, ItemMetaAutoForm
 from item.models import Item
 
 
@@ -27,8 +27,7 @@ class ItemApi(View):
     def _serialize_item(self, item):
         return {
             'price': '{0:.2f}'.format(item.price),
-            'name': item.name,
-            'meta': ', '.join(item.meta.names()),
+            'tags': sorted(item.tags.names()),
             'id': item.id
         }
 
@@ -130,16 +129,7 @@ class ItemList(View):
         })
 
 
-class ItemNameAuto(View):
-    def get(self, request):
-        form = ItemNameAutoForm(request.GET)
-        if form.is_valid():
-            return JsonResponse(form.cleaned_data['term'], safe=False)
-        else:
-            raise NotImplementedError(form.errors)
-
-
-class ItemMetaAuto(View):
+class ItemTagsAuto(View):
     def get(self, request):
         form = ItemMetaAutoForm(request.GET)
         if form.is_valid():
