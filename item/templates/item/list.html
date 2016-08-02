@@ -26,8 +26,7 @@
             "csrftoken": "{{ csrf_token }}",
             "urls": {
                 "itemApi": "{% url 'item-api' date.year date.month|stringformat:'02d' %}",
-                "itemNameAuto": "{% url 'item-name-auto' %}",
-                "itemMetaAuto": "{% url 'item-meta-auto' %}"
+                "itemTagsAuto": "{% url 'item-tags-auto' %}"
             }
         }
     </script>
@@ -54,11 +53,10 @@
     <div id="content">
         <form id="item-form">
             {% csrf_token %}
+            {{ form.tags }}
+            <input type="submit" id="id_submit" value="{% trans '+' %}">
             {{ form.date }}
             {{ form.price }}
-            {{ form.name }}
-            {{ form.meta }}
-            <input type="submit" id="id_submit" value="{% trans 'Add' %}">
         </form>
         <div id="items"></div>
     </div>

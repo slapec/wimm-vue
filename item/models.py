@@ -13,8 +13,7 @@ class TaggedItem(TaggedItemBase):
 class Item(models.Model):
     date = models.DateField(verbose_name=_('date'), db_index=True)
     price = models.DecimalField(max_digits=11, decimal_places=2)
-    name = models.CharField(max_length=64, verbose_name=_('name'), blank=True)
-    meta = TaggableManager(blank=True, through=TaggedItem)
+    tags = TaggableManager(blank=True, through=TaggedItem)
 
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
 
@@ -22,7 +21,7 @@ class Item(models.Model):
         ordering = ('date', 'created_at')
 
     def __str__(self):
-        return '#{id} {date}: {name!r} {price}{meta}'.format(
-            id=self.id, date=self.date, name=self.name, price=self.price,
-            meta=' (' + repr(self.meta) + ')' if self.meta else ''
+        return '#{id} {date}: {price}{tags}'.format(
+            id=self.id, date=self.date, price=self.price,
+            tags=' (' + repr(self.tags) + ')' if self.tags else ''
         )

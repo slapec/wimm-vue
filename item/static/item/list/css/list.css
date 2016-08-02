@@ -94,7 +94,6 @@ body {
     outline: none;
 }
 
-
 #title {
     position: fixed;
     top: 0;
@@ -207,15 +206,16 @@ body {
     margin-left: 8px;
 }
 
-.name {
-    word-break: break-all;
-    margin-right: 6px;
+.item-tag::after {
+    content: ', ';
 }
 
-.meta {
-    word-break: break-all;
-    color: rgba(0, 0, 0, 0.4);
-    font-style: italic;
+.item-tag:last-child {
+    margin-right: 0;
+}
+
+.item-tag:last-child::after {
+    content: '';
 }
 
 .numeric {
@@ -270,30 +270,15 @@ body {
     border: 1px solid #6299a9;
 }
 
-#id_date {
-    width: 7em!important;
-    order: 1
-}
-
-#id_price {
-    width: calc(100% - 7em - 4px)!important;
-    text-align: right;
-    order: 2
-}
-
-#id_name {
-    order: 3
-}
-
 #item-form .tag-editor {
-    width: calc(60% - 4px)!important;
-    order: 4;
     box-sizing: border-box;
     padding: 0 0 2pt 0;
     border: 1px solid #bbb;
     font-size: 14pt;
     margin-bottom: 4px;
     min-height: 24pt;
+    width: calc(100% - 2em - 4px)!important;
+    order: 1;
 }
 
 .tag-editor .tag-editor-spacer {
@@ -323,9 +308,25 @@ body {
     line-height: 18pt;
 }
 
+#id_tags {
+    width: calc(100% - 2em - 4px)!important;
+    order: 1;
+}
+
 #id_submit {
-    width: 40%!important;
-    order: 5
+    width: 2em!important;
+    order: 2;
+}
+
+#id_date {
+    width: 7em!important;
+    order: 3;
+}
+
+#id_price {
+    width: calc(100% - 7em - 4px)!important;
+    text-align: right;
+    order: 4;
 }
 
 #pages {
@@ -338,22 +339,25 @@ body {
 .toolbar {
     position: fixed;
     bottom: 0;
-    right: 0;
-    left: 0;
+    width: 100%;
     background: #fff;
-    display: flex;
+    display: table;
     border-top: 1px solid #9a9a9a;
     transform: translateY(100%);
     transition: 0.3s ease transform;
+    table-layout: fixed;
 }
 
 .toolbar-button {
+    display: table-cell;
+    vertical-align: middle;
     padding: 10px;
     border-right: 1px solid #ddd;
     text-align: center;
-    width: 100%;
     -webkit-tap-highlight-color: transparent;
     cursor: pointer;
+    overflow: hidden;
+    word-break: break-word;
 }
 
 .toolbar-button:active {
@@ -396,23 +400,22 @@ body {
 }
 
 @media (min-width: 480px){
-    #id_price {
-        width: calc(75% - 7em - 8px)!important;
-    }
-
-    #id_name {
-        width: calc(40% - 2px)!important;
-        order: 4
-    }
-
     #item-form .tag-editor {
-        width: calc(60% - 2px)!important;
-        order: 5
+        width: 100%!important;
+        order: 1;
+    }
+
+    #id_date {
+        order: 2;
+    }
+
+    #id_price {
+        order: 3;
+        width: calc(100% - 9em - 8px)!important;
     }
 
     #id_submit {
-        width: 25%!important;
-        order: 3
+        order: 4;
     }
 }
 
