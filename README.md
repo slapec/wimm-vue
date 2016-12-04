@@ -17,11 +17,11 @@ than to choose one.
 3.  Create the `wimm/settings.py` file and define the missing names
     in it (see the list in the example below).
 
-    It's a good idea to import everything from `wimm/dev_settings.py`
+    It's a good idea to import everything from `wimm/base_settings.py`
     in your settings file like this:
     
     ```
-    from wimm.dev_settings import *
+    from wimm.base_settings import *
     
     DEBUG = False
     SECRET_KEY = 'some secret'

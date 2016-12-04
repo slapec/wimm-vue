@@ -136,3 +136,8 @@ class ItemTagsAuto(View):
             return JsonResponse(form.cleaned_data['term'], safe=False)
         else:
             raise NotImplementedError(form.errors)
+
+
+class Index(View):
+    def get(self, request):
+        return render(request, 'index.html')

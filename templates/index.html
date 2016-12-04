@@ -1,0 +1,25 @@
+{% load i18n %}
+{% load l10n %}
+{% load static %}
+
+{% get_current_language as LANGUAGE_CODE %}
+
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>WIMM</title>
+
+    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'app/style.css' %}">
+</head>
+<body>
+    <div id="wimm">
+        <tags :tags="tagList" :choices="autocomplete"></tags>
+    </div>
+
+    <script src="{% static 'app/main.js' %}"></script>
+</body>
+</html>

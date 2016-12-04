@@ -1,0 +1,33 @@
+{
+  "name": "wimm",
+  "version": "2.0.0",
+  "description": "WIMM - Where Is My Money?",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slapec/wimm.git"
+  },
+  "author": "slapec",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/slapec/wimm/issues"
+  },
+  "homepage": "https://github.com/slapec/wimm#readme",
+  "devDependencies": {
+    "browser-sync": "^2.17.5",
+    "browserify": "^13.1.1",
+    "gulp": "^3.9.1",
+    "gulp-bundle-assets": "^2.27.1",
+    "gulp-clean-css": "^2.0.13",
+    "gulp-sass": "^2.3.2",
+    "gulp-util": "^3.0.7",
+    "uglifyjs": "^2.4.10",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "vue": "^2.1.4",
+    "vueify": "^9.3.0",
+    "watchify": "^3.7.0"
+  },
+  "browser": {
+    "vue": "vue/dist/vue.common"
+  }
+}
