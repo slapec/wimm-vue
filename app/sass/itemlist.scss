@@ -1,0 +1,21 @@
+#date-items-list {
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+#edit {
+  position: fixed;
+  bottom: 4pt;
+  right: 4pt;
+  width: 3em;
+  height: 3em;
+  box-shadow: 0 0 2px black;
+  //transform: translate(-50%, -50%)
+}
+
+#footer {
+  text-align: center;
+  color: #bbb;
+  font-size: 12px;
+  line-height: 44px;
+}

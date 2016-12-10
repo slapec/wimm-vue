@@ -39,7 +39,7 @@
         },
         data: function(){
             return {
-                tagList: this.tags.map(_ => ''+_),
+                tagList: this.tags,
                 currentTag: '',
                 conflict: false,
 
@@ -48,7 +48,7 @@
                 selectedIndex: UNDEFINED,
 
                 deferBlur: false
-            }
+            };
         },
         methods: {
             keydown: function(e){
@@ -128,12 +128,21 @@
                 }
             },
             resolveChoices: function(){
-                Promise.resolve(this.choices(this.currentTag))
+                try {
+                    var choices = this.choices(this.currentTag);
+                }
+                catch (e) {
+                    return;
+                }
+
+                if(this.choices){
+                    Promise.resolve(choices)
                     .then(value => {
                         this.choiceList = value;
                         this.selectedIndex = UNDEFINED;
                         this.choiceListVisible = this.choiceList.length > 0;
                     });
+                }
             }
         },
         created: function(){
