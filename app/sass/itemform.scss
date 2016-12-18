@@ -1,7 +1,7 @@
 @import "consts";
 
 $date-width: 7em;
-$submit-width: 3em;
+$submit-width: 2em;
 $input-spacing: 4px;
 $input-font-size: 14pt;
 $form-padding: 6px;
@@ -9,6 +9,11 @@ $form-padding: 6px;
 form.item-form {
   display: flex;
   flex-wrap: wrap;
+  position: relative;
+
+  ul {
+    border: $input-border;
+  }
 
   .tags {
     width: 100%;

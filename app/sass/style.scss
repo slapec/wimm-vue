@@ -12,30 +12,4 @@ body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14pt;
   background: $body-background;
-
-  #main-item-form {
-    display: flex;
-    border-bottom: 1px dashed #9a9a9a;
-    padding: 6px;
-
-    .item-form {
-      flex-grow: 1;
-      margin-right: 6px;
-    }
-
-
-    button[type=submit] {
-      width: $submit-width;
-      background: $submit-background;
-      color: $submit-color;
-      border: $submit-border;
-      font-size: $input-font-size;
-      outline: none;
-
-      &:active {
-        background: $submit-border-color;
-        border: 1px solid $submit-background;
-      }
-    }
-  }
 }

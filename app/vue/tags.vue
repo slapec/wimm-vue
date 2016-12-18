@@ -104,6 +104,7 @@
                             if(this.tagList.indexOf(tag) === UNDEFINED){
                                 this.tagList.push(tag);
                                 this.currentTag = '';
+                                this.focusInput();
                             }
                             else {
                                 this.conflict = true;

@@ -1,3 +1,9 @@
+// Credit goes to http://stackoverflow.com/a/5639455
+
+function getCsrfToken(){
+    return (document.cookie.match(/(^|; )csrftoken=([^;]*)/)||0)[2]
+}
+
 module.exports.autocomplete = function(term){
     if(term){
         return fetch(`/autocomplete/tags?term=${term}`)
@@ -9,8 +15,19 @@ module.exports.autocomplete = function(term){
 };
 
 module.exports.items = {
-    loadMonth: function({year, month}){
-        return fetch(`/${year}/${month}/items/`)
+    loadMonth({year, month}){
+        return fetch(`/items/${year}/${month}/`)
             .then(v => v.json());
+    },
+    add(formData){
+        return fetch('/items/', {
+            method: 'POST',
+            body: formData,
+            credentials: 'same-origin',
+            headers: new Headers({
+                'X-CSRFToken': getCsrfToken()
+            })
+        })
+        .then(v => v.json());
     }
 };

@@ -15,7 +15,7 @@ from item.forms import ItemForm, ItemDeleteForm, ItemMetaAutoForm
 from item.models import Item
 
 
-class ItemApi(View):
+class YearMonthItemApi(View):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -50,26 +50,26 @@ class ItemApi(View):
 
         return JsonResponse(date_item_list, safe=False)
 
-    def post(self, request, year, month):
-        form = ItemForm(request.POST or None, initial={'date': self.initial_date})
+
+class ItemApi(View):
+    def post(self, request):
+        form = ItemForm(request.POST or None)
 
         if form.is_valid():
             item = form.save()
-            if item.date.year == self.date.year and item.date.month == self.date.month:
-                result = {
-                    'date': item.date,
-                    'items': [self._serialize_item(item)]
+            return JsonResponse({
+                'date': item.date,
+                'item': {
+                    'price': '{0:.2f}'.format(item.price),
+                    'tags': list(item.tags.names()),
+                    'id': item.id
                 }
-            else:
-                result = {}
-            return JsonResponse(result, safe=False)
+            }, safe=False)
         else:
             raise NotImplementedError(form.errors)
 
-    def delete(self, request, year, month):
-        date = datetime.date(int(year), int(month), 1)
-
-        form = ItemDeleteForm(json.loads(request.body.decode()), date=date)
+    def delete(self, request):
+        form = ItemDeleteForm(json.loads(request.body.decode()))
         if form.is_valid():
             with transaction.atomic():
                 form.cleaned_data['items'].delete()

@@ -63,6 +63,9 @@ $choices-tag-padding: 4px;
 
   ul {
     position: absolute;
+    left: 0;
+    right: 0;
+    overflow-y: auto;
     margin: $choices-margin;
     padding: 0;
     border: $border;

@@ -1,3 +1,4 @@
+let moment = require('moment');
 let VueRouter = require('vue-router');
 
 let ItemList = require('./../vue/itemlist.vue');
@@ -8,12 +9,8 @@ module.exports = new VueRouter({
         {
             name: 'index',
             path: '/', redirect: () => {
-                let now = new Date();
-                let month = now.getMonth() + 1;
-
-                month = month < 10 ? `0${month}` : month;
-
-                return {name: 'item:list:year-month', params: {year: now.getFullYear(), month: month}}
+                let now = moment();
+                return {name: 'item:list:year-month', params: {year: now.format('YYYY'), month: now.format('MM')}}
             }
         },
         {

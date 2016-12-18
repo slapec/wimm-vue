@@ -1,3 +1,86 @@
+@import "consts";
+@import "globals";
+
+@import "itemform";
+
+#title {
+  background: white;
+  position: fixed;
+  z-index: 256;
+  top: 0;
+  left: 0;
+  right: 0;
+  border-bottom: 1px solid #9a9a9a;
+  display: flex;
+  justify-content: flex-end;
+
+  #previous-month {
+    padding-right: 8pt;
+  }
+
+  #next-month {
+    padding-left: 8pt;
+  }
+
+  .month-control {
+    padding: 6pt;
+    border: none;
+    background: transparent;
+    border-left: 1px solid #9a9a9a;
+    font-size: 22pt;
+    z-index: 256;
+    outline: none;
+    cursor: pointer;
+
+    &:active {
+      background: #dbdbdb;
+    }
+  }
+
+  #year-month {
+    position: absolute;
+    z-index: 128;
+    left: 0;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+  }
+}
+
+#main-item-form {
+  display: flex;
+  border-bottom: 1px dashed #9a9a9a;
+  padding: 6px;
+  margin-top: 46px;
+
+  .item-form {
+    flex-grow: 1;
+    margin-right: 6px;
+  }
+
+  button[type=submit] {
+    width: $submit-width;
+    background: $submit-background;
+    color: #143842;
+    text-shadow: 0 1px rgb(70, 196, 230), 0 -1px #000;
+    border: $submit-border;
+    font-size: $submit-font-size;
+    outline: none;
+    cursor: pointer;
+
+    &:active {
+      background: $submit-border-color;
+      border: 1px solid $submit-background;
+    }
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+  }
+}
+
 #date-items-list {
   padding: 6px;
   box-sizing: border-box;
@@ -5,17 +88,28 @@
 
 #edit {
   position: fixed;
-  bottom: 4pt;
-  right: 4pt;
-  width: 3em;
-  height: 3em;
-  box-shadow: 0 0 2px black;
-  //transform: translate(-50%, -50%)
+  bottom: 8pt;
+  right: 8pt;
+  width: 2em;
+  height: 2em;
+  border-radius: 50%;
+  border: $submit-border;
+  background: $submit-background;
+  color: #143842;
+  text-shadow: 0 1px rgb(70, 196, 230), 0 -1px #000;
+  font-size: 24pt;
+  outline: none;
+  cursor: pointer;
+
+  &:active {
+    background: $submit-border-color;
+    border: 1px solid $submit-background;
+  }
 }
 
 #footer {
   text-align: center;
   color: #bbb;
   font-size: 12px;
-  line-height: 44px;
+  line-height: 74px;
 }

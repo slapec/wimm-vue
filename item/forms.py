@@ -12,19 +12,6 @@ class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
         fields = ('date', 'price', 'tags')
-        widgets = {
-            'date': forms.TextInput(attrs={
-                'placeholder': _('Date'),
-                'class': 'numeric'
-            }),
-            'price': forms.NumberInput(attrs={
-                'placeholder': _('Price'),
-                'tabindex': 2,
-                'class': 'numeric',
-                'autocomplete': 'off'
-            }),
-            'tags': forms.TextInput(attrs={'placeholder': _('Tags'), 'tabindex': 1})
-        }
 
     def clean_price(self):
         price = self.cleaned_data['price']
