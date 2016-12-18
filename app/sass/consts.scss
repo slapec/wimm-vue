@@ -1,10 +1,58 @@
 $body-background: #e9e9e9;
-
+$border-color: #ddd;
+$border: 1px solid $border-color;
+$choices-margin: 5px 0 0 0;
+$choices-tag-padding: 4px;
+$date-width: 7em;
+$error-background: #ebc1c1;
+$error-color: #501414;
+$form-padding: 6px;
 $input-background: #fff;
 $input-border: 1px solid #bbb;
+$input-font-size: 14pt;
+$input-spacing: 4px;
 
-$submit-color: #fff;
-$submit-background: #39a2bf;
-$submit-border-color: #286d81;
-$submit-border: 1px solid $submit-border-color;
-$submit-font-size: 24pt;
+
+$tag-background: #c1e2eb;
+$tag-color: #14404c;
+$tag-font: sans-serif;
+$tag-margin: 3px 0 3px 3px;
+$tag-padding: 2px 4px 2px;
+$tag-size: 16px;
+
+// colors ----------------------------------------------------------------------
+$color-main-background: #fff;
+$color-main-background-alternating: #f5f5f5;
+$color-main-divider: #9a9a9a;
+
+// dateitems.vue ---------------------------------------------------------------
+$date-items-background: $color-main-background;
+$date-items-border: $input-border;
+$date-items-margin: 3px;
+$date-items-head-padding: 4px 0 4px 0;
+$date-items-li-padding: 4px;
+$date-items-li-odd-background: $color-main-background-alternating;
+
+// itemlist.vue ----------------------------------------------------------------
+$title-background: $color-main-background;
+$title-bottom-border: 1px solid $color-main-divider;
+
+$date-item-list-padding: 3px;
+$main-item-form-border: 1px dashed $color-main-divider;
+$main-item-form-padding: $date-item-list-padding;
+$main-item-form-right-margin: 3px;
+$main-item-form-submit-width: 2em;
+$main-item-form-submit-background: #39a2bf;
+$main-item-form-submit-border-color: #286d81;
+$main-item-form-submit-border-width: 1px;
+$main-item-form-submit-color: darken($main-item-form-submit-border-color, 14);
+$main-item-form-submit-font-size: 20pt;
+
+$layer-0: 0;
+$layer-10: 10;
+$layer-20: 20;
+$layer-30: 30;
+$layer-40: 40;
+$layer-50: 50;
+$layer-60: 60;
+$layer-70: 70;

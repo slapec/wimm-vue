@@ -1,20 +1,4 @@
-$tag-background: #c1e2eb;
-$tag-color: #14404c;
-
-$error-background: #ebc1c1;
-$error-color: #501414;
-
-$border-color: #ddd;
-$border: 1px solid $border-color;
-
-$tag-margin: 3px 0 3px 3px;
-$tag-padding: 2px 4px 2px;
-
-$tag-font: sans-serif;
-$tag-size: 16px;
-
-$choices-margin: 5px 0 0 0;
-$choices-tag-padding: 4px;
+@import "consts";
 
 .tags {
   display: flex;

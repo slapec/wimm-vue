@@ -1,23 +1,23 @@
 <template>
     <div id="item-list" :class="{loading: loading}">
         <div v-if="loading" id="loader"></div>
+
         <div id="title">
             <div id="year-month">{{ yearMonth }}</div>
             <button id="previous-month" class="fa fa-chevron-left month-control" @click="seekMonth(-1)"></button>
             <button id="next-month" class="fa fa-chevron-right month-control" @click="seekMonth(1)"></button>
-        </div>
-        <div id="main-item-form">
-            <item-form id="item-form-0" @submit="submit" :date="today" @datechanged="dateChanged" :disabled="submitting"></item-form>
-            <button type="submit" form="item-form-0" class="fa fa-plus" v-bind:disabled="submitting"></span></button>
         </div>
 
         <div id="date-items-list">
             <date-items v-for="dateItems of dates" :date="dateItems.date" :items="dateItems.items"></date-items>
         </div>
 
-        <button id="edit" class="fa fa-pencil"></button>
+        <div id="main-item-form">
+            <item-form id="item-form-0" @submit="submit" :date="today" @datechanged="dateChanged" :disabled="submitting"></item-form>
+            <button type="submit" form="item-form-0" class="fa fa-plus" v-bind:disabled="submitting"></span></button>
+        </div>
 
-        <div id="footer">WIMM</div>
+        <!--<tools @deleting="deleting"></tools>-->
     </div>
 </template>
 
@@ -26,13 +26,15 @@
 
     let io = require('../js/io');
 
-    let ItemForm = require('./itemform.vue');
     let DateItems = require('./dateitems.vue');
+    let ItemForm = require('./itemform.vue');
+    let Tools = require('./tools.vue');
 
     module.exports = {
         components: {
             'item-form': ItemForm,
-            'date-items': DateItems
+            'date-items': DateItems,
+            'tools': Tools
         },
         created: function(){
             this.loadMonth(this.$route.params);
@@ -116,6 +118,9 @@
             },
             dateChanged(date){
                 this.today = date;
+            },
+            deleting(isDeleting){
+                console.log(isDeleting);
             }
         },
         watch: {

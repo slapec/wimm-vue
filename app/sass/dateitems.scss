@@ -1,14 +1,17 @@
 @import "consts";
 
 .date-items {
-  border: $input-border;
-  box-shadow: 0 1px 0 white;
-  background: white;
-  margin-bottom: 6px;
+  border: $date-items-border;
+  background: $date-items-background;
+  margin-bottom: $date-items-margin;
+
+  &:last-child {
+    margin: 0;
+  }
 
   .date-items-head {
     text-align: center;
-    padding: 6px;
+    padding: $date-items-head-padding;
     border-bottom: $input-border;
   }
 
@@ -18,12 +21,12 @@
     list-style-type: none;
 
     li {
-      padding: 8px;
+      padding: $date-items-li-padding;
       display: flex;
       flex-wrap: wrap;
 
       &:nth-of-type(odd){
-        background: #f5f5f5;
+        background: $date-items-li-odd-background;
       }
 
       .tag-list span {
