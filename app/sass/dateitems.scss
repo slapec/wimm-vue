@@ -25,8 +25,21 @@
       display: flex;
       flex-wrap: wrap;
 
+      &.selected {
+        background: #ffe5e5;
+      }
+
       &:nth-of-type(odd){
         background: $date-items-li-odd-background;
+
+        &.selected {
+          background: #ffbbbb;
+        }
+      }
+
+      input[type=checkbox] {
+        align-self: center;
+        margin: 0 $date-items-li-padding 0 0;
       }
 
       .tag-list span {

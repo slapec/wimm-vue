@@ -2,87 +2,105 @@
 
 @import "itemform";
 
-#title {
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: $layer-70;
+#item-list {
   display: flex;
-  justify-content: flex-end;
-  background: $title-background;
-  border-bottom: $title-bottom-border;
+  flex-direction: column;
+  height: 100vh;
 
-  #previous-month {
-    padding-right: 8pt;
-  }
+  #title {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    background: $title-background;
+    border-bottom: $title-bottom-border;
 
-  #next-month {
-    padding-left: 8pt;
-  }
+    #previous-month {
+      padding-right: 6pt;
+    }
 
-  .month-control {
-    padding: 6pt;
-    border: none;
-    background: transparent;
-    border-left: 1px solid #9a9a9a;
-    font-size: 22pt;
-    z-index: 256;
-    outline: none;
-    cursor: pointer;
+    #next-month {
+      padding-left: 6pt;
+    }
 
-    &:active {
-      background: #dbdbdb;
+    button {
+      padding: 4pt;
+      border: none;
+      background: transparent;
+      border-right: 1px solid #9a9a9a;
+      font-size: 16pt;
+      z-index: 256;
+      outline: none;
+      cursor: pointer;
+
+      &:active {
+        background: #dbdbdb;
+      }
+
+      &:last-of-type {
+        border-right: none;
+      }
+    }
+
+    .h-fill {
+      margin: auto;
+    }
+
+    .h-fill + button {
+      border-left: 1px solid #9a9a9a;
+    }
+
+    #year-month {
+      position: absolute;
+      z-index: 128;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      text-align: center;
     }
   }
 
-  #year-month {
-    position: absolute;
-    z-index: 128;
-    left: 0;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    text-align: center;
-  }
-}
-
-#date-items-list {
-  padding: $date-item-list-padding;
-  box-sizing: border-box;
-}
-
-#main-item-form {
-  display: flex;
-  border-top: $main-item-form-border;
-  padding: $main-item-form-padding;
-
-  .item-form {
+  #date-items-list {
+    padding: $date-item-list-padding;
+    overflow-y: auto;
     flex-grow: 1;
-    margin-right: $main-item-form-right-margin;
   }
 
-  button[type=submit] {
-    width: $main-item-form-submit-width;
-    background: $main-item-form-submit-background;
-    color: $main-item-form-submit-color;
-    border: $main-item-form-submit-border-width solid $main-item-form-submit-color;
-    font-size: $main-item-form-submit-font-size;
-    outline: none;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+  #main-item-form {
+    display: flex;
+    flex-shrink: 0;
+    background: $body-background;
+    border-top: $main-item-form-border;
+    padding: $main-item-form-padding;
 
-    &:active {
-      color: $main-item-form-submit-background;
-      background: $main-item-form-submit-color;
+    .item-form {
+      flex-grow: 1;
+      margin-right: $main-item-form-right-margin;
     }
 
-    &:disabled {
-      $color: lighten(grayscale($main-item-form-submit-color), 30);
-      color: $color;
-      background: lighten(grayscale($main-item-form-submit-background), 30);
-      border: $main-item-form-submit-border-width solid $color;
-      cursor: default;
+    button[type=submit] {
+      width: $main-item-form-submit-width;
+      background: $main-item-form-submit-background;
+      color: $main-item-form-submit-color;
+      border: $main-item-form-submit-border-width solid $main-item-form-submit-color;
+      font-size: $main-item-form-submit-font-size;
+      outline: none;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+
+      &:active {
+        color: $main-item-form-submit-background;
+        background: $main-item-form-submit-color;
+      }
+
+      &:disabled {
+        $color: lighten(grayscale($main-item-form-submit-color), 30);
+        color: $color;
+        background: lighten(grayscale($main-item-form-submit-background), 30);
+        border: $main-item-form-submit-border-width solid $color;
+        cursor: default;
+      }
     }
   }
 }

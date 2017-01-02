@@ -4,20 +4,24 @@
 
         <div id="title">
             <div id="year-month">{{ yearMonth }}</div>
-            <button id="previous-month" class="fa fa-chevron-left month-control" @click="seekMonth(-1)"></button>
-            <button id="next-month" class="fa fa-chevron-right month-control" @click="seekMonth(1)"></button>
+            <button id="edit" class="fa fa-pencil"></button>
+            <button id="delete" class="fa fa-trash-o" @click="deleting = !deleting"></button>
+            <div class="h-fill"></div>
+            <button v-if="!deleting" id="previous-month" class="fa fa-chevron-left" @click="seekMonth(-1)"></button>
+            <button v-if="!deleting" id="next-month" class="fa fa-chevron-right" @click="seekMonth(1)"></button>
+
+            <button v-if="deleting" id="delete-cancel" class="fa fa-close"></button>
+            <button v-if="deleting" id="delete-confirm" class="fa fa-check"></button>
         </div>
 
         <div id="date-items-list">
-            <date-items v-for="dateItems of dates" :date="dateItems.date" :items="dateItems.items"></date-items>
+            <date-items v-for="dateItems of dates" :key="dateItems.date" :date="dateItems.date" :items="dateItems.items" :deleting="deleting" @select="itemSelected"></date-items>
         </div>
 
         <div id="main-item-form">
             <item-form id="item-form-0" @submit="submit" :date="today" @datechanged="dateChanged" :disabled="submitting"></item-form>
             <button type="submit" form="item-form-0" class="fa fa-plus" v-bind:disabled="submitting"></span></button>
         </div>
-
-        <!--<tools @deleting="deleting"></tools>-->
     </div>
 </template>
 
@@ -28,13 +32,11 @@
 
     let DateItems = require('./dateitems.vue');
     let ItemForm = require('./itemform.vue');
-    let Tools = require('./tools.vue');
 
     module.exports = {
         components: {
             'item-form': ItemForm,
             'date-items': DateItems,
-            'tools': Tools
         },
         created: function(){
             this.loadMonth(this.$route.params);
@@ -45,7 +47,9 @@
                 submitting: false,
                 today: null,
                 yearMonth: null,
-                dates: []
+                dates: [],
+                deleting: false,
+                selected: {}
             }
         },
         methods: {
@@ -119,8 +123,8 @@
             dateChanged(date){
                 this.today = date;
             },
-            deleting(isDeleting){
-                console.log(isDeleting);
+            itemSelected(item){
+                console.log(item.id);
             }
         },
         watch: {

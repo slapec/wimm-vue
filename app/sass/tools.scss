@@ -1,24 +1,24 @@
-@import "consts";
-
-#tools {
-  position: fixed;
-  bottom: 6px;
-  right: 6px;
-
-  button {
-    width: 2em;
-    height: 2em;
-    border-radius: 50%;
-    border: $main-item-form-submit-border-width solid $main-item-form-submit-color;
-    background: $main-item-form-submit-background;
-    color: $main-item-form-submit-color;
-    font-size: 24pt;
-    outline: none;
-    cursor: pointer;
-
-    &:active {
-      background: $main-item-form-submit-border-color;
-      border: 1px solid $main-item-form-submit-background;
-    }
-  }
-}
+//@import "consts";
+//
+//#tools {
+//  position: fixed;
+//  bottom: 6px;
+//  right: 6px;
+//
+//  button {
+//    width: 2em;
+//    height: 2em;
+//    border-radius: 50%;
+//    border: $main-item-form-submit-border-width solid $main-item-form-submit-color;
+//    background: $main-item-form-submit-background;
+//    color: $main-item-form-submit-color;
+//    font-size: 24pt;
+//    outline: none;
+//    cursor: pointer;
+//
+//    &:active {
+//      background: $main-item-form-submit-border-color;
+//      border: 1px solid $main-item-form-submit-background;
+//    }
+//  }
+//}
