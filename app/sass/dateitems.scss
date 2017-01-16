@@ -3,7 +3,7 @@
 .date-items {
   border: $date-items-border;
   background: $date-items-background;
-  margin-bottom: $date-items-margin;
+  margin-bottom: $date-items-bottom-margin;
 
   &:last-child {
     margin: 0;
@@ -12,7 +12,7 @@
   .date-items-head {
     text-align: center;
     padding: $date-items-head-padding;
-    border-bottom: $input-border;
+    border-bottom: $date-items-head-bottom-border;
   }
 
   .items {
@@ -20,40 +20,71 @@
     padding: 0;
     list-style-type: none;
 
-    li {
-      padding: $date-items-li-padding;
+    & > li {
       display: flex;
       flex-wrap: wrap;
+      position: relative;
+      padding: $date-items-li-padding;
 
       &.selected {
-        background: #ffe5e5;
+        background: $date-items-li-selected-background;
       }
 
       &:nth-of-type(odd){
         background: $date-items-li-odd-background;
 
         &.selected {
-          background: #ffbbbb;
+          background: $date-items-li-selected-odd-background;
         }
       }
 
-      input[type=checkbox] {
-        align-self: center;
-        margin: 0 $date-items-li-padding 0 0;
-      }
-
-      .tag-list span {
-        &::after {
-          content: ', '
+      input {
+        &[type=checkbox] {
+          align-self: center;
+          margin: 0 $date-items-li-padding 0 0;
         }
 
-        &:last-child::after {
-          content: '';
+        &.price {
+          text-align: right;
+          width: $date-items-price-input-width;
+          border: $input-border;
+          padding: $date-items-price-input-padding;
+          background: $input-background;
         }
       }
 
-      .price {
-        margin-left: auto;
+      .tag-list {
+        flex-grow: 1;
+
+        span {
+          &::after {
+            content: ', '
+          }
+
+          &:last-child::after {
+            content: '';
+          }
+        }
+      }
+
+      .tags {
+        border: none;
+        flex-grow: 1;
+
+        li {
+          margin: $date-items-tags-tag-margin;
+        }
+
+        ul {
+          border: $date-items-tags-dropdown-border;
+        }
+      }
+
+      button {
+        margin: $date-items-save-margin;
+        border: none;
+        border-left: $date-items-save-left-border;
+        background: $date-items-save-background;
       }
     }
   }

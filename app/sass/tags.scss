@@ -47,21 +47,34 @@
 
   ul {
     position: absolute;
+    display: flex;
+    flex-direction: column;
     left: 0;
-    right: 0;
+    right: 5%;
+    max-height: 40vh;
     overflow-y: auto;
-    margin: $choices-margin;
     padding: 0;
     border: $border;
     list-style: none;
     z-index: 65535;
     background: white;
 
+    &.dropup{
+      top: 0;
+      max-height: 40vh;
+      transform: translateY(-100%);
+      flex-direction: column-reverse;
+    }
+
     li {
       padding: $choices-tag-padding;
       font-family: $tag-font;
       cursor: pointer;
       border: 1px solid transparent;
+
+      &:nth-child(odd){
+        background: #f6f6f6;
+      }
     }
 
     .tag-choice-selected {

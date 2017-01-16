@@ -23,13 +23,7 @@ class ItemForm(forms.ModelForm):
 
 
 class ItemDeleteForm(forms.Form):
-    items = forms.ModelMultipleChoiceField(queryset=Item.objects.none())
-
-    def __init__(self, *args, date, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields['items'].queryset = Item.objects.filter(date__year=date.year,
-                                                            date__month=date.month)
+    items = forms.ModelMultipleChoiceField(queryset=Item.objects.all())
 
 
 class ItemMetaAutoForm(forms.Form):

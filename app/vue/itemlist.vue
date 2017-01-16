@@ -4,18 +4,44 @@
 
         <div id="title">
             <div id="year-month">{{ yearMonth }}</div>
-            <button id="edit" class="fa fa-pencil"></button>
-            <button id="delete" class="fa fa-trash-o" @click="deleting = !deleting"></button>
-            <div class="h-fill"></div>
-            <button v-if="!deleting" id="previous-month" class="fa fa-chevron-left" @click="seekMonth(-1)"></button>
-            <button v-if="!deleting" id="next-month" class="fa fa-chevron-right" @click="seekMonth(1)"></button>
 
-            <button v-if="deleting" id="delete-cancel" class="fa fa-close"></button>
-            <button v-if="deleting" id="delete-confirm" class="fa fa-check"></button>
+            <button id="edit" class="fa"
+                    :class="{'fa-pencil': !editing, 'fa-times': editing, disabled: deleting}"
+                    v-bind:disabled="deleting"
+                    @click="editing = !editing">
+            </button>
+            <button id="delete" class="fa"
+                    :class="{'fa-trash-o': !deleting, 'fa-times': deleting, disabled: editing}"
+                    v-bind:disabled="editing"
+                    @click="deleting = !deleting">
+            </button>
+
+            <div class="h-fill"></div>
+
+            <button id="previous-month" class="fa fa-chevron-left"
+                    v-if="canNavigate"
+                    @click="seekMonth(-1)">
+            </button>
+            <button id="next-month" class="fa fa-chevron-right"
+                    v-if="canNavigate"
+                    @click="seekMonth(1)">
+            </button>
+
+            <button id="delete-confirm" class="fa fa-check"
+                    v-if="deleting"
+                    @click="deleteSelected()">
+            </button>
         </div>
 
         <div id="date-items-list">
-            <date-items v-for="dateItems of dates" :key="dateItems.date" :date="dateItems.date" :items="dateItems.items" :deleting="deleting" @select="itemSelected"></date-items>
+            <date-items v-for="dateItems of dates"
+                        :key="dateItems.date"
+                        :date="dateItems.date"
+                        :items="dateItems.items"
+                        :deleting="deleting"
+                        :editing="editing"
+                        @select="itemSelected">
+            </date-items>
         </div>
 
         <div id="main-item-form">
@@ -49,7 +75,8 @@
                 yearMonth: null,
                 dates: [],
                 deleting: false,
-                selected: {}
+                editing: false,
+                selected: new Set()
             }
         },
         methods: {
@@ -58,7 +85,7 @@
 
                 io.items.loadMonth({year, month})
                 .then(dates => {
-                    dates.sort((left, right) => left.date <= right.date);
+                    dates.sort((left, right) => (left.date > right.date) - (left.date < right.date));
                     this.dates = dates;
                 })
                 .then(() => {
@@ -76,7 +103,15 @@
                     }
                 })
                 .then(() => {
+                    let lastItem = document.querySelector('.date-items:last-child li:last-child');
+                    if(lastItem){
+                        lastItem.scrollIntoView();
+                    }
+
                     this.loading = false;
+                    this.deleting = false;
+                    this.editing = false;
+                    this.selected = new Set();
                 });
             },
             submit(formData, callback){
@@ -87,15 +122,17 @@
                     let [date] = this.dates.filter(d => d.date === item.date);
 
                     if(date){
-                        date.items.unshift(item.item);
+                        date.items.push(item.item);
                     }
                     else {
                         this.dates.push({
                             date: item.date,
                             items: [item.item]
                         });
-                        this.dates.sort((l, r) => l.date < r.date);
+                        this.dates.sort((left, right) => (left.date > right.date) - (left.date < right.date));
                     }
+
+                    this.$nextTick(() => document.getElementById(`item-${item.item.id}`).scrollIntoView(false));
                 })
                 .then(() => {
                     callback();
@@ -123,13 +160,46 @@
             dateChanged(date){
                 this.today = date;
             },
-            itemSelected(item){
-                console.log(item.id);
+            itemSelected(id, isSelected){
+                let selected = this.selected;
+
+                if(isSelected){
+                    selected.add(id);
+                }
+                else {
+                    selected.delete(id);
+                }
+            },
+            deleteSelected(){
+                let toDelete = Array.from(this.selected);
+
+                this.loading = true;
+                io.items.remove(toDelete)
+                .then(() => {
+                    for(let date of this.dates){
+                        date.items = date.items.filter(d => !this.selected.has(d.id));
+                    }
+
+                    this.dates = this.dates.filter(d => d.items.length > 0);
+
+                    this.selected = new Set();
+                    this.loading = false;
+                })
+            }
+        },
+        computed: {
+            canNavigate(){
+                return !this.deleting && !this.editing;
             }
         },
         watch: {
             $route(route){
                 this.loadMonth(route.params);
+            },
+            deleting(value){
+                if(!value){
+                    this.selected = new Set();
+                }
             }
         }
     };

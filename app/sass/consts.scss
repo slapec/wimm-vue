@@ -28,10 +28,27 @@ $color-main-divider: #9a9a9a;
 // dateitems.vue ---------------------------------------------------------------
 $date-items-background: $color-main-background;
 $date-items-border: $input-border;
-$date-items-margin: 3px;
+$date-items-bottom-margin: 3px;
 $date-items-head-padding: 4px 0 4px 0;
+$date-items-head-bottom-border: $input-border;
 $date-items-li-padding: 4px;
 $date-items-li-odd-background: $color-main-background-alternating;
+$date-items-li-selected-background: #ffe5e5;
+$date-items-li-selected-odd-background: #ffbbbb;
+$date-items-tags-tag-margin: 0 4px 0 0;
+$date-items-tags-dropdown-border: 1px solid $color-main-divider;
+$date-items-price-input-width: 6em;
+$date-items-price-input-border: $input-border;
+$date-items-price-input-padding: 0 2px;
+$date-items-save-margin: -1 * $date-items-li-padding -1 * $date-items-li-padding -1 * $date-items-li-padding $date-items-li-padding;
+$date-items-save-left-border: 1px solid $color-main-divider;
+$date-items-save-background: transparent;
+
+// itemform.vue ----------------------------------------------------------------
+$item-form-tags-dropdown-border: 1px solid $color-main-divider;
+$item-form-input-padding: 2px;
+$item-form-date-width: 7em;
+$item-form-date-right-margin: $input-spacing;
 
 // itemlist.vue ----------------------------------------------------------------
 $title-background: $color-main-background;
@@ -47,6 +64,7 @@ $main-item-form-submit-border-color: #286d81;
 $main-item-form-submit-border-width: 1px;
 $main-item-form-submit-color: darken($main-item-form-submit-border-color, 14);
 $main-item-form-submit-font-size: 20pt;
+$main-item-form-input-padding: 2px;
 
 $layer-0: 0;
 $layer-10: 10;

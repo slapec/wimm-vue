@@ -1,14 +1,32 @@
 <template>
     <form class="item-form" @submit.prevent="submit">
-        <tags :choices="autocomplete" :tags="tags"></tags>
-        <input type="text" v-bind:value="date" v-on:input="dateChanged($event.target.value)" class="date numeric" autocomplete="off" placeholder="Date" required v-bind:disabled="disabled">
-        <input type="number" v-model="price" class="price numeric" step="0.01" autocomplete="off" placeholder="Price" required v-bind:disabled="disabled">
+        <tags :choices="autocomplete"
+              :tags="tags"
+              @blur="focusPrice()"
+        ></tags>
+        <input type="text"
+               class="date numeric"
+               autocomplete="off"
+               placeholder="Date"
+               required
+               v-if="!datehidden"
+               @input="dateChanged($event.target.value)"
+               v-bind:value="date"
+               v-bind:disabled="disabled">
+        <input type="number"
+               class="price numeric"
+               step="0.01"
+               autocomplete="off"
+               placeholder="Price"
+               required
+               ref="price"
+               v-model="price"
+               v-bind:disabled="disabled">
     </form>
 </template>
 
 <script>
     let Tags = require('./tags.vue');
-    let autocomplete = require('./../js/io').autocomplete;
 
     module.exports = {
         components: {
@@ -16,7 +34,8 @@
         },
         props: {
             date: String,
-            disabled: Boolean
+            disabled: Boolean,
+            datehidden: String
         },
         data: function(){
             return {
@@ -25,7 +44,7 @@
             }
         },
         methods: {
-            autocomplete: autocomplete,
+            autocomplete: require('./../js/io').autocomplete,
             dateChanged(value){
                 this.$emit('datechanged', value);
             },
@@ -39,6 +58,9 @@
                     this.price = null;
                     this.tags.splice(0, this.tags.length);
                 });
+            },
+            focusPrice(){
+                this.$refs.price.focus();
             }
         }
     }

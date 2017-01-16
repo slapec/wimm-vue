@@ -59,6 +59,10 @@
       transform: translateY(-50%);
       text-align: center;
     }
+
+    .disabled {
+      color: rgba(0, 0, 0, 0.2)
+    }
   }
 
   #date-items-list {
@@ -77,6 +81,11 @@
     .item-form {
       flex-grow: 1;
       margin-right: $main-item-form-right-margin;
+
+      .tags {
+        background: $input-background;
+        margin-bottom: $input-spacing;
+      }
     }
 
     button[type=submit] {
@@ -102,5 +111,7 @@
         cursor: default;
       }
     }
+
+
   }
 }

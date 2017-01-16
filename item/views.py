@@ -73,7 +73,7 @@ class ItemApi(View):
         if form.is_valid():
             with transaction.atomic():
                 form.cleaned_data['items'].delete()
-                return JsonResponse(reverse('item-api', args=(year, month)), safe=False)
+                return JsonResponse({})
         else:
             raise NotImplementedError(form.errors)
 

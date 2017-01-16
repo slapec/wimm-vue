@@ -1,13 +1,23 @@
 <template>
-    <ul class="tags" :class="{conflict:conflict, empty: tagList}" @click="focusInput">
-        <li v-for="tag of tagList" class="tag" @click="remove($event, tag)" :key="tag">
+    <ul class="tags"
+        :class="{conflict:conflict, empty: tagList.length}"
+        @click="focusInput">
+        <li class="tag"
+            v-for="tag of tagList"
+            :key="tag"
+            @click="remove($event, tag)">
             {{ tag }}
         </li>
 
         <li class="tag-input">
-            <input v-model="currentTag" @keydown="keydown" @blur="add" ref="tagInput">
-            <ul v-if="choiceListVisible">
-                <li v-for="(tag, index) of choiceList"
+            <input ref="tagInput"
+                   v-model="currentTag"
+                   @keydown="keydown"
+                   @blur="add" >
+            <ul v-if="choiceListVisible"
+                :class="{dropup: dropup}">
+                <li ref="choices"
+                    v-for="(tag, index) of choiceList"
                     :class="{'tag-choice-selected': index === selectedIndex}"
                     @mousedown="deferBlur = true"
                     @mouseup="add($event, tag)"
@@ -45,13 +55,14 @@
 
                 choiceList: [],
                 choiceListVisible: false,
+                dropup: false,
                 selectedIndex: UNDEFINED,
 
                 deferBlur: false
             };
         },
         methods: {
-            keydown: function(e){
+            keydown(e){
                 if(e.key === 'Backspace'){
                     if(!this.currentTag){
                         e.preventDefault();
@@ -63,23 +74,53 @@
                     e.preventDefault();
 
                     this.choiceListVisible = false;
-                    this.add();
-                    this.focusInput();
+
+                    if(this.currentTag && this.currentTag.length > 0){
+                        this.add();
+                        this.focusInput();
+                    }
+                    else {
+                        this.$emit('blur');
+                    }
                 }
 
                 if(this.choiceListVisible){
-                    if(e.key === 'ArrowDown'){
+                    let key = e.key;
+                    if(this.dropup){
+                        if(key === 'ArrowDown'){
+                            key = 'ArrowUp';
+                        }
+                        else if(key === 'ArrowUp'){
+                            key = 'ArrowDown';
+                        }
+                    }
+
+                    if(key === 'ArrowDown'){
                         e.preventDefault();
 
                         this.selectedIndex = (this.selectedIndex + 1) % this.choiceList.length;
                         this.currentTag = this.choiceList[this.selectedIndex];
+
+                        this.$nextTick(() => {
+                            let target = this.$refs.choices[this.selectedIndex];
+//                            console.log(target.parentElement.scrollTop, target.getBoundingClientRect().top, target.parentElement.getBoundingClientRect().top);
+//                            target.parentElement.scrollTop = target.getBoundingClientRect().top - target.parentElement.getBoundingClientRect().top;
+//                            console.log(target.parentElement.scrollTop, target.getBoundingClientRect().top, target.parentElement.getBoundingClientRect().top, '<');
+                        });
                     }
-                    else if(e.key === 'ArrowUp'){
+                    else if(key === 'ArrowUp'){
                         e.preventDefault();
 
                         let n = this.choiceList.length;
                         this.selectedIndex = (((this.selectedIndex - 1) % n) + n ) % n;
                         this.currentTag = this.choiceList[this.selectedIndex];
+
+                        this.$nextTick(() => {
+                            let target = this.$refs.choices[this.selectedIndex];
+//                            console.log(target.parentElement.scrollTop, target.getBoundingClientRect().top, target.parentElement.getBoundingClientRect().top);
+//                            target.parentElement.scrollTop = target.getBoundingClientRect().top - target.parentElement.getBoundingClientRect().top;
+//                            console.log(target.parentElement.scrollTop, target.getBoundingClientRect().top, target.parentElement.getBoundingClientRect().top, '<');
+                        });
                     }
                     else if(e.key.length === 1 || CHOICE_WHITELIST.has(e.key)){
                         this.resolveRequired = true;
@@ -89,7 +130,7 @@
                     this.resolveRequired = true;
                 }
             },
-            add: function(e, tag){
+            add(e, tag){
                 if(tag){
                     this.currentTag = tag;
                     this.deferBlur = false;
@@ -115,22 +156,24 @@
 
                 this.deferBlur = false;
             },
-            remove: function(e, tag){
+            remove(e, tag){
                 e.stopPropagation();
 
                 this.tagList.splice(this.tagList.indexOf(tag), 1);
                 this.conflict = false;
             },
-            focusInput: function(){
+            focusInput(){
                 let tagInput = this.$refs.tagInput;
 
                 if(tagInput){
                     tagInput.focus();
                 }
             },
-            resolveChoices: function(){
+            resolveChoices(){
+                let choices;
+
                 try {
-                    var choices = this.choices(this.currentTag);
+                    choices = this.choices(this.currentTag);
                 }
                 catch (e) {
                     return;
@@ -142,14 +185,21 @@
                         this.choiceList = value;
                         this.selectedIndex = UNDEFINED;
                         this.choiceListVisible = this.choiceList.length > 0;
+
+                        this.dropup = this.$refs.tagInput.getBoundingClientRect().top / window.innerHeight >= 0.4;
                     });
                 }
             }
         },
-        created: function(){
+        created(){
             this.resolveRequired = false;
+            this.$nextTick(() => {
+                let tagInput = this.$refs.tagInput;
+                tagInput.style.width = '2px';
+                tagInput.style.width = `${tagInput.scrollWidth + 2}px`
+            });
         },
-        updated: function(){
+        updated(){
             let tagInput = this.$refs.tagInput;
 
             if(tagInput){

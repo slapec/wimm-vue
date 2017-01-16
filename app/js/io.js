@@ -29,5 +29,23 @@ module.exports.items = {
             })
         })
         .then(v => v.json());
+    },
+    remove(items){
+        // I'm very consistent
+        // TODO: Rename *delete* to *remove*
+
+        let body = new Blob([JSON.stringify({
+            'items': items
+        })], {type: 'application/json'});
+
+        return fetch('/items/', {
+            method: 'DELETE',
+            body: body,
+            credentials: 'same-origin',
+            headers: new Headers({
+                'X-CSRFToken': getCsrfToken()
+            })
+        })
+        .then(v => v.json());
     }
 };
