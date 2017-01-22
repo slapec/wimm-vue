@@ -40,6 +40,9 @@ $date-items-tags-dropdown-border: 1px solid $color-main-divider;
 $date-items-price-input-width: 6em;
 $date-items-price-input-border: $input-border;
 $date-items-price-input-padding: 0 2px;
+
+$date-items-selected-margin: -1 * $date-items-li-padding $date-items-li-padding -1 * $date-items-li-padding -1 * $date-items-li-padding;
+
 $date-items-save-margin: -1 * $date-items-li-padding -1 * $date-items-li-padding -1 * $date-items-li-padding $date-items-li-padding;
 $date-items-save-left-border: 1px solid $color-main-divider;
 $date-items-save-background: transparent;

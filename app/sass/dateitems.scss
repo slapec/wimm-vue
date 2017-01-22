@@ -80,10 +80,17 @@
         }
       }
 
-      button {
+      button.fa-save {
         margin: $date-items-save-margin;
         border: none;
         border-left: $date-items-save-left-border;
+        background: $date-items-save-background;
+      }
+
+      button.selected {
+        margin: $date-items-selected-margin;
+        border: none;
+        border-right: $date-items-save-left-border;
         background: $date-items-save-background;
       }
     }

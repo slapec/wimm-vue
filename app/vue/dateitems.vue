@@ -7,9 +7,9 @@
                 :class="{selected: selected[item.id], editing: editing}"
                 @click="selectSelf(item.id)">
 
-                <span class="fa fa-fw"
+                <button class="fa selected"
                       v-if="deleting"
-                      :class="{'fa-square-o': !selected[item.id], 'fa-check-square': selected[item.id]}"></span>
+                      :class="{'fa-square-o': !selected[item.id], 'fa-check-square': selected[item.id]}"></button>
 
                 <template v-if="editing">
                     <tags :choices="autocomplete" :tags="item.tags"></tags>
