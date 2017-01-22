@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-bind="http://www.w3.org/1999/xhtml">
     <div class="date-items">
         <div class="numeric date-items-head">{{ date }}</div>
         <ul class="items">
@@ -7,7 +7,9 @@
                 :class="{selected: selected[item.id], editing: editing}"
                 @click="selectSelf(item.id)">
 
-                <input type="checkbox" v-if="deleting" v-model="selected[item.id]">
+                <span class="fa fa-fw"
+                      v-if="deleting"
+                      :class="{'fa-square-o': !selected[item.id], 'fa-check-square': selected[item.id]}"></span>
 
                 <template v-if="editing">
                     <tags :choices="autocomplete" :tags="item.tags"></tags>

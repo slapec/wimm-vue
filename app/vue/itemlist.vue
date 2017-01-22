@@ -5,32 +5,36 @@
         <div id="title">
             <div id="year-month">{{ yearMonth }}</div>
 
-            <button id="edit" class="fa"
-                    :class="{'fa-pencil': !editing, 'fa-times': editing, disabled: deleting}"
-                    v-bind:disabled="deleting"
-                    @click="editing = !editing">
-            </button>
-            <button id="delete" class="fa"
-                    :class="{'fa-trash-o': !deleting, 'fa-times': deleting, disabled: editing}"
-                    v-bind:disabled="editing"
-                    @click="deleting = !deleting">
-            </button>
+            <div class="button-group">
+                <button id="edit" class="fa"
+                        :class="{'fa-pencil': !editing, 'fa-times': editing, disabled: deleting}"
+                        v-bind:disabled="deleting"
+                        @click="editing = !editing">
+                </button>
+                <button id="delete" class="fa"
+                        :class="{'fa-trash-o': !deleting, 'fa-times': deleting, disabled: editing}"
+                        v-bind:disabled="editing"
+                        @click="deleting = !deleting">
+                </button>
+            </div>
 
             <div class="h-fill"></div>
 
-            <button id="previous-month" class="fa fa-chevron-left"
-                    v-if="canNavigate"
-                    @click="seekMonth(-1)">
-            </button>
-            <button id="next-month" class="fa fa-chevron-right"
-                    v-if="canNavigate"
-                    @click="seekMonth(1)">
-            </button>
+            <div class="button-group">
+                <button id="previous-month" class="fa fa-chevron-left"
+                        v-if="canNavigate"
+                        @click="seekMonth(-1)">
+                </button>
+                <button id="next-month" class="fa fa-chevron-right"
+                        v-if="canNavigate"
+                        @click="seekMonth(1)">
+                </button>
 
-            <button id="delete-confirm" class="fa fa-check"
-                    v-if="deleting"
-                    @click="deleteSelected()">
-            </button>
+                <button id="delete-confirm" class="fa fa-check"
+                        v-if="deleting"
+                        @click="deleteSelected()">
+                </button>
+            </div>
         </div>
 
         <div id="date-items-list">

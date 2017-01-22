@@ -27,32 +27,39 @@
       padding: 4pt;
       border: none;
       background: transparent;
-      border-right: 1px solid #9a9a9a;
+      border-right: $title-bottom-border;
       font-size: 16pt;
-      z-index: 256;
       outline: none;
       cursor: pointer;
 
       &:active {
         background: #dbdbdb;
       }
-
-      &:last-of-type {
-        border-right: none;
-      }
     }
 
     .h-fill {
       margin: auto;
+
+      &~.button-group {
+        border-left: $title-bottom-border;
+      }
     }
 
-    .h-fill + button {
-      border-left: 1px solid #9a9a9a;
+    .button-group {
+      z-index: $layer-10;
+
+      &:last-of-type {
+        button {
+          &:last-child {
+            border-right: none;
+          }
+        }
+      }
     }
 
     #year-month {
       position: absolute;
-      z-index: 128;
+      z-index: $layer-0;
       left: 0;
       right: 0;
       top: 50%;
@@ -111,7 +118,5 @@
         cursor: default;
       }
     }
-
-
   }
 }
