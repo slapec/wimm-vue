@@ -34,13 +34,23 @@
         },
         props: {
             date: String,
+            initPrice: {
+                type: [Number, String],
+                required: false,
+                default: () => null
+            },
+            initTags: {
+                type: Array,
+                required: false,
+                default: () => []
+            },
             disabled: Boolean,
             datehidden: String
         },
         data: function(){
             return {
-                price: null,
-                tags: []
+                price: this.initPrice,
+                tags: this.initTags.slice()
             }
         },
         methods: {

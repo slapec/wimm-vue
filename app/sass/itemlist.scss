@@ -15,45 +15,43 @@
     background: $title-background;
     border-bottom: $title-bottom-border;
 
-    #previous-month {
-      padding-right: 6pt;
-    }
-
-    #next-month {
-      padding-left: 6pt;
-    }
-
     button {
-      padding: 4pt;
+      padding: $title-button-padding;
+      background: $title-button-background;
       border: none;
-      background: transparent;
-      border-right: $title-bottom-border;
-      font-size: 16pt;
+      border-left: $title-button-left-border;
+      font-size: $title-button-size;
       outline: none;
       cursor: pointer;
 
+      -webkit-tap-highlight-color: transparent;
+
       &:active {
-        background: #dbdbdb;
+        background: $title-button-active-background;
       }
     }
 
     .h-fill {
-      margin: auto;
-
-      &~.button-group {
-        border-left: $title-bottom-border;
-      }
+      flex: 1;
+      border-left: $title-button-left-border;
     }
 
     .button-group {
+      display: flex;
       z-index: $layer-10;
 
-      &:last-of-type {
+      &.main {
         button {
-          &:last-child {
-            border-right: none;
+          &:first-child {
+            border-left: none;
           }
         }
+      }
+    }
+
+    .navigation {
+      button {
+        font-weight: bold;
       }
     }
 
@@ -68,7 +66,7 @@
     }
 
     .disabled {
-      color: rgba(0, 0, 0, 0.2)
+      color: $title-button-disabled-color;
     }
   }
 
@@ -81,7 +79,7 @@
   #main-item-form {
     display: flex;
     flex-shrink: 0;
-    background: $body-background;
+    background: $main-item-form-background;
     border-top: $main-item-form-border;
     padding: $main-item-form-padding;
 
@@ -90,8 +88,8 @@
       margin-right: $main-item-form-right-margin;
 
       .tags {
-        background: $input-background;
-        margin-bottom: $input-spacing;
+        background: $main-item-form-input-background;
+        margin-bottom: $main-item-form-input-bottom-margin;
       }
     }
 
@@ -101,6 +99,7 @@
       color: $main-item-form-submit-color;
       border: $main-item-form-submit-border-width solid $main-item-form-submit-color;
       font-size: $main-item-form-submit-font-size;
+      font-weight: $main-item-form-submit-font-weight;
       outline: none;
       cursor: pointer;
       -webkit-tap-highlight-color: transparent;

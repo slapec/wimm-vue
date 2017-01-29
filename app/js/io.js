@@ -31,8 +31,9 @@ module.exports.items = {
         .then(v => v.json());
     },
     remove(items){
-        // I'm very consistent
-        // TODO: Rename *delete* to *remove*
+        if(!items.length){
+            return Promise.resolve();
+        }
 
         let body = new Blob([JSON.stringify({
             'items': items

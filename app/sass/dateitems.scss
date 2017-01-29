@@ -22,7 +22,6 @@
 
     & > li {
       display: flex;
-      flex-wrap: wrap;
       position: relative;
       padding: $date-items-li-padding;
 
@@ -38,60 +37,60 @@
         }
       }
 
-      input {
-        &[type=checkbox] {
-          align-self: center;
-          margin: 0 $date-items-li-padding 0 0;
-        }
-
-        &.price {
-          text-align: right;
-          width: $date-items-price-input-width;
-          border: $input-border;
-          padding: $date-items-price-input-padding;
-          background: $input-background;
-        }
-      }
-
-      .tag-list {
+      .item {
         flex-grow: 1;
+        display: flex;
+        flex-wrap: wrap;
 
-        span {
-          &::after {
-            content: ', '
-          }
+        .tag-list {
+          flex-grow: 1;
 
-          &:last-child::after {
-            content: '';
+          span {
+            &::after {
+              content: ', '
+            }
+
+            &:last-child::after {
+              content: '';
+            }
           }
         }
-      }
 
-      .tags {
-        border: none;
-        flex-grow: 1;
-
-        li {
-          margin: $date-items-tags-tag-margin;
+        .item-form {
+          flex-grow: 1;
         }
 
-        ul {
-          border: $date-items-tags-dropdown-border;
+        .price {
+          margin-left: auto;
+        }
+
+        .tags {
+          background: $main-item-form-input-background;
+          margin-bottom: $main-item-form-input-bottom-margin;
         }
       }
 
-      button.fa-save {
-        margin: $date-items-save-margin;
-        border: none;
-        border-left: $date-items-save-left-border;
-        background: $date-items-save-background;
-      }
+      .button-group {
+        margin: -1 * $date-items-li-padding -1 * $date-items-li-padding -1 * $date-items-li-padding $date-items-li-padding;
+        border-left: $date-items-button-group-left-border;
+        display: flex;
+        flex-direction: column;
 
-      button.selected {
-        margin: $date-items-selected-margin;
-        border: none;
-        border-right: $date-items-save-left-border;
-        background: $date-items-save-background;
+        button {
+          border: none;
+          outline: none;
+          cursor: pointer;
+          flex-grow: 1;
+          -webkit-tap-highlight-color: transparent;
+
+          background: $date-items-button-background;
+          padding: $date-items-li-padding;
+          font-size: $date-items-button-font-size;
+
+          &:active {
+            background: $date-items-button-active-background;
+          }
+        }
       }
     }
   }

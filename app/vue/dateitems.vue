@@ -1,4 +1,4 @@
-<template xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<template>
     <div class="date-items">
         <div class="numeric date-items-head">{{ date }}</div>
         <ul class="items">
@@ -7,37 +7,53 @@
                 :class="{selected: selected[item.id], editing: editing}"
                 @click="selectSelf(item.id)">
 
-                <button class="fa selected"
-                      v-if="deleting"
-                      :class="{'fa-square-o': !selected[item.id], 'fa-check-square': selected[item.id]}"></button>
+                <div class="item">
+                    <template v-if="editors[item.id]">
+                        <item-form :id="'item-form-' + item.id"
+                                   :init-tags="item.tags"
+                                   :init-price="item.price"
+                                   :date="date"
+                                   @submit="submit(item.id, $event)"></item-form>
+                    </template>
+                    <template v-else>
+                        <div class="tag-list">
+                            <span v-for="tag of item.tags">{{ tag }}</span>
+                        </div>
+                        <span class="numeric price"
+                              v-bind:class="{positive: item.price > 0}">
+                            {{ item.price | money }}
+                        </span>
+                    </template>
+                </div>
 
-                <template v-if="editing">
-                    <tags :choices="autocomplete" :tags="item.tags"></tags>
-                    <input v-if="editing" type="number" v-model="item.price" class="price numeric" step="0.01" autocomplete="off" placeholder="Price">
-                    <button class="fa fa-save"></button>
-                </template>
-                <template v-else>
-                    <div class="tag-list">
-                        <span v-for="tag of item.tags">{{ tag }}</span>
-                    </div>
-                    <span class="numeric price"
-                          v-bind:class="{positive: item.price > 0}">
-                        {{ item.price | money }}
-                    </span>
-                </template>
+                <div class="button-group" v-if="deleting || editing">
+                    <button class="i selected"
+                      v-if="deleting"
+                      :class="{'i-check_box_outline_blank': !selected[item.id], 'i-check_box': selected[item.id]}"></button>
+
+                    <button class="i"
+                        :class="{'i-mode_edit': !editors[item.id], 'i-close': editors[item.id]}"
+                        v-if="editing"
+                        @click="editSelf(item.id)"></button>
+
+                    <button type="submit"
+                            class="i i-save"
+                            v-if="editors[item.id]"
+                            :form="'item-form-' + item.id"></button>
+                </div>
             </li>
         </ul>
     </div>
 </template>
 
 <script>
-    let Tags = require('./tags.vue');
+    let ItemForm = require('./itemform.vue');
 
     let formatter = Intl.NumberFormat();
 
     module.exports = {
         components: {
-            Tags: Tags
+            'item-form': ItemForm,
         },
         props: {
             date: String,
@@ -47,7 +63,8 @@
         },
         data(){
             return {
-                selected: {}
+                selected: {},
+                editors: {}
             }
         },
         methods: {
@@ -58,11 +75,24 @@
                     this.$emit('select', id, isSelected)
                 }
             },
+            editSelf(id){
+                if(this.editing){
+                    let hasEditor = !this.editors[id];
+                    this.$set(this.editors, id, hasEditor);
+                }
+            },
+            submit(){
+                console.log(arguments);
+            },
+
             autocomplete: require('./../js/io').autocomplete
         },
         watch: {
             deleting(){
                 this.selected = {};
+            },
+            editing(){
+                this.editors = {};
             }
         },
         filters: {

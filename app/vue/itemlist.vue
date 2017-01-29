@@ -5,14 +5,14 @@
         <div id="title">
             <div id="year-month">{{ yearMonth }}</div>
 
-            <div class="button-group">
-                <button id="edit" class="fa"
-                        :class="{'fa-pencil': !editing, 'fa-times': editing, disabled: deleting}"
+            <div class="button-group main">
+                <button id="edit" class="i"
+                        :class="{'i-mode_edit': !editing, 'i-close': editing, disabled: deleting}"
                         v-bind:disabled="deleting"
                         @click="editing = !editing">
                 </button>
-                <button id="delete" class="fa"
-                        :class="{'fa-trash-o': !deleting, 'fa-times': deleting, disabled: editing}"
+                <button id="delete" class="i"
+                        :class="{'i-delete': !deleting, 'i-close': deleting, disabled: editing}"
                         v-bind:disabled="editing"
                         @click="deleting = !deleting">
                 </button>
@@ -20,17 +20,17 @@
 
             <div class="h-fill"></div>
 
-            <div class="button-group">
-                <button id="previous-month" class="fa fa-chevron-left"
+            <div class="button-group navigation">
+                <button class="i i-keyboard_arrow_left"
                         v-if="canNavigate"
                         @click="seekMonth(-1)">
                 </button>
-                <button id="next-month" class="fa fa-chevron-right"
+                <button class="i i-navigate_next"
                         v-if="canNavigate"
                         @click="seekMonth(1)">
                 </button>
 
-                <button id="delete-confirm" class="fa fa-check"
+                <button id="delete-confirm" class="i i-check"
                         v-if="deleting"
                         @click="deleteSelected()">
                 </button>
@@ -48,9 +48,10 @@
             </date-items>
         </div>
 
-        <div id="main-item-form">
+        <div id="main-item-form"
+            v-show="canNavigate">
             <item-form id="item-form-0" @submit="submit" :date="today" @datechanged="dateChanged" :disabled="submitting"></item-form>
-            <button type="submit" form="item-form-0" class="fa fa-plus" v-bind:disabled="submitting"></span></button>
+            <button type="submit" form="item-form-0" class="i i-add" v-bind:disabled="submitting"></button>
         </div>
     </div>
 </template>
@@ -66,7 +67,7 @@
     module.exports = {
         components: {
             'item-form': ItemForm,
-            'date-items': DateItems,
+            'date-items': DateItems
         },
         created: function(){
             this.loadMonth(this.$route.params);
@@ -89,7 +90,10 @@
 
                 io.items.loadMonth({year, month})
                 .then(dates => {
-                    dates.sort((left, right) => (left.date > right.date) - (left.date < right.date));
+                    dates.sort((left, right) => (left.date > right.date) - (left.date < right.date))
+                         .forEach(date => date.items.forEach(item => {
+                              item.price = Number(item.price);
+                    }));
                     this.dates = dates;
                 })
                 .then(() => {

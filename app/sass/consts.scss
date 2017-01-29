@@ -40,12 +40,12 @@ $date-items-tags-dropdown-border: 1px solid $color-main-divider;
 $date-items-price-input-width: 6em;
 $date-items-price-input-border: $input-border;
 $date-items-price-input-padding: 0 2px;
+$date-items-button-active-background: rgba(0, 0, 0, 0.1);
 
-$date-items-selected-margin: -1 * $date-items-li-padding $date-items-li-padding -1 * $date-items-li-padding -1 * $date-items-li-padding;
-
-$date-items-save-margin: -1 * $date-items-li-padding -1 * $date-items-li-padding -1 * $date-items-li-padding $date-items-li-padding;
-$date-items-save-left-border: 1px solid $color-main-divider;
-$date-items-save-background: transparent;
+$date-items-button-group-left-border: 1px solid $color-main-divider;
+$date-items-button-bottom-border: 1px solid #e2e2e2;
+$date-items-button-background: transparent;
+$date-items-button-font-size: 1.2em;
 
 // itemform.vue ----------------------------------------------------------------
 $item-form-tags-dropdown-border: 1px solid $color-main-divider;
@@ -54,20 +54,30 @@ $item-form-date-width: 7em;
 $item-form-date-right-margin: $input-spacing;
 
 // itemlist.vue ----------------------------------------------------------------
-$title-background: $color-main-background;
 $title-bottom-border: 1px solid $color-main-divider;
+$title-button-background: transparent;
+$title-button-left-border: $title-bottom-border;
+$title-button-padding: 4px;
+$title-button-size: 22pt;
+$title-background: $color-main-background;
+$title-button-active-background: #dbdbdb;
+$title-button-disabled-color: rgba(0, 0, 0, 0.2);
 
 $date-item-list-padding: 3px;
+$main-item-form-background: $body-background;
 $main-item-form-border: 1px solid $color-main-divider;
 $main-item-form-padding: $date-item-list-padding;
 $main-item-form-right-margin: 3px;
-$main-item-form-submit-width: 2em;
+$main-item-form-submit-width: auto;
 $main-item-form-submit-background: #39a2bf;
 $main-item-form-submit-border-color: #286d81;
 $main-item-form-submit-border-width: 1px;
 $main-item-form-submit-color: darken($main-item-form-submit-border-color, 14);
-$main-item-form-submit-font-size: 20pt;
+$main-item-form-submit-font-size: 26pt;
+$main-item-form-submit-font-weight: bold;
 $main-item-form-input-padding: 2px;
+$main-item-form-input-background: $input-background;
+$main-item-form-input-bottom-margin: $input-spacing;
 
 $layer-0: 0;
 $layer-10: 10;
