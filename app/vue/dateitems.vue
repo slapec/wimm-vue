@@ -36,7 +36,7 @@
                     <button class="i"
                         :class="{'i-mode_edit': !editors[item.id], 'i-close': editors[item.id]}"
                         v-if="editing"
-                        @click="editSelf(item.id)"></button>
+                        @click="editSelf(item.id, $event)"></button>
 
                     <button type="submit"
                             class="i i-save"
@@ -87,9 +87,16 @@
 
                     this.$emit('select', id, isSelected)
                 }
+                else if(this.editing){
+                    if(!this.editors[id]){
+                        this.$set(this.editors, id, true);
+                    }
+                }
             },
-            editSelf(id){
+            editSelf(id, e){
                 if(this.editing){
+                    e.stopPropagation();
+
                     if(this.editors[id]){
                         this.$delete(this.editors, id);
                     }
