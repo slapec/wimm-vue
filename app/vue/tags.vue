@@ -1,9 +1,9 @@
 <template>
     <ul class="tags"
-        :class="{conflict:conflict, empty: tagList.length}"
+        :class="{conflict: conflict, empty: pTags.length, disabled: disabled}"
         @click="focusInput">
         <li class="tag"
-            v-for="tag of tagList"
+            v-for="tag of pTags"
             :key="tag"
             @click="remove($event, tag)">
             {{ tag }}
@@ -13,11 +13,12 @@
             <input ref="tagInput"
                    v-model="currentTag"
                    @keydown="keydown"
-                   @blur="add" >
+                   @blur="add"
+                   :disabled="disabled">
             <ul v-if="choiceListVisible"
                 :class="{dropup: dropup}">
                 <li ref="choices"
-                    v-for="(tag, index) of choiceList"
+                    v-for="(tag, index) of pChoices"
                     :class="{'tag-choice-selected': index === selectedIndex}"
                     @mousedown="deferBlur = true"
                     @mouseup="add($event, tag)"
@@ -31,7 +32,7 @@
 
 <script>
     let UNDEFINED = -1;
-    let DELIMITERS = new Set(['Tab', 'Enter']);
+    // TODO: Make these configurable in props
     let CHOICE_WHITELIST = new Set(['Backspace', 'Delete']);
 
     module.exports = {
@@ -39,21 +40,33 @@
             tags: {
                 type: Array,
                 required: false,
-                default: () => []
+                'default': () => []
             },
             choices: {
                 type: [Function, Array],
                 required: false,
-                default: () => []
+                'default': () => []
+            },
+            delimiters: {
+                type: Array,
+                required: false,
+                'default': () => ['Tab', 'Enter']
+            },
+            disabled: {
+                type: Boolean,
+                required: false,
+                'default': () => false
             }
         },
         data: function(){
             return {
-                tagList: this.tags,
+                pDelimiters: new Set(this.delimiters),
+
+                pTags: this.tags,
                 currentTag: '',
                 conflict: false,
 
-                choiceList: [],
+                pChoices: this.choices,
                 choiceListVisible: false,
                 dropup: false,
                 selectedIndex: UNDEFINED,
@@ -66,11 +79,11 @@
                 if(e.key === 'Backspace'){
                     if(!this.currentTag){
                         e.preventDefault();
-                        this.currentTag = this.tagList.pop();
+                        this.currentTag = this.pTags.pop();
                         this.conflict = false;
                     }
                 }
-                else if(DELIMITERS.has(e.key)){
+                else if(this.pDelimiters.has(e.key)){
                     e.preventDefault();
 
                     this.choiceListVisible = false;
@@ -98,8 +111,8 @@
                     if(key === 'ArrowDown'){
                         e.preventDefault();
 
-                        this.selectedIndex = (this.selectedIndex + 1) % this.choiceList.length;
-                        this.currentTag = this.choiceList[this.selectedIndex];
+                        this.selectedIndex = (this.selectedIndex + 1) % this.pChoices.length;
+                        this.currentTag = this.pChoices[this.selectedIndex];
 
                         this.$nextTick(() => {
                             let target = this.$refs.choices[this.selectedIndex];
@@ -111,9 +124,9 @@
                     else if(key === 'ArrowUp'){
                         e.preventDefault();
 
-                        let n = this.choiceList.length;
+                        let n = this.pChoices.length;
                         this.selectedIndex = (((this.selectedIndex - 1) % n) + n ) % n;
-                        this.currentTag = this.choiceList[this.selectedIndex];
+                        this.currentTag = this.pChoices[this.selectedIndex];
 
                         this.$nextTick(() => {
                             let target = this.$refs.choices[this.selectedIndex];
@@ -142,8 +155,8 @@
                     if(this.currentTag && this.currentTag.length > 0){
                         let tag = this.currentTag.trim();
                         if(tag.length > 0){
-                            if(this.tagList.indexOf(tag) === UNDEFINED){
-                                this.tagList.push(tag);
+                            if(this.pTags.indexOf(tag) === UNDEFINED){
+                                this.pTags.push(tag);
                                 this.currentTag = '';
                                 this.focusInput();
                             }
@@ -157,9 +170,13 @@
                 this.deferBlur = false;
             },
             remove(e, tag){
+                if(this.disabled){
+                    return;
+                }
+
                 e.stopPropagation();
 
-                this.tagList.splice(this.tagList.indexOf(tag), 1);
+                this.pTags.splice(this.pTags.indexOf(tag), 1);
                 this.conflict = false;
             },
             focusInput(){
@@ -182,9 +199,9 @@
                 if(this.choices){
                     Promise.resolve(choices)
                     .then(value => {
-                        this.choiceList = value;
+                        this.pChoices = value;
                         this.selectedIndex = UNDEFINED;
-                        this.choiceListVisible = this.choiceList.length > 0;
+                        this.choiceListVisible = this.pChoices.length > 0;
 
                         this.dropup = this.$refs.tagInput.getBoundingClientRect().top / window.innerHeight >= 0.4;
                     });

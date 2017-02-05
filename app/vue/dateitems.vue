@@ -4,23 +4,25 @@
         <ul class="items">
             <li v-for="item of items"
                 :key="item.id" :id="'item-' + item.id"
-                :class="{selected: selected[item.id], editing: editing}"
+                :class="{selected: selected[item.id], editing: editing, submitting: submitting[item.id]}"
                 @click="selectSelf(item.id)">
 
                 <div class="item">
                     <template v-if="editors[item.id]">
                         <item-form :id="'item-form-' + item.id"
-                                   :init-tags="item.tags"
-                                   :init-price="item.price"
-                                   :date="date"
-                                   @submit="submit(item.id, $event)"></item-form>
+                                   :tags="item.tags"
+                                   :price="item.price"
+                                   :date="item.date"
+                                   :disabled="submitting[item.id]"
+                                   @dateChanged="dateChanged(item, $event)"
+                                   @submit="submit(item, $event)"></item-form>
                     </template>
                     <template v-else>
                         <div class="tag-list">
                             <span v-for="tag of item.tags">{{ tag }}</span>
                         </div>
                         <span class="numeric price"
-                              v-bind:class="{positive: item.price > 0}">
+                              :class="{positive: item.price > 0}">
                             {{ item.price | money }}
                         </span>
                     </template>
@@ -39,7 +41,9 @@
                     <button type="submit"
                             class="i i-save"
                             v-if="editors[item.id]"
-                            :form="'item-form-' + item.id"></button>
+                            :form="'item-form-' + item.id"
+                            :disabled="submitting[item.id]"
+                    ></button>
                 </div>
             </li>
         </ul>
@@ -47,6 +51,7 @@
 </template>
 
 <script>
+    let io = require('./../js/io');
     let ItemForm = require('./itemform.vue');
 
     let formatter = Intl.NumberFormat();
@@ -64,28 +69,57 @@
         data(){
             return {
                 selected: {},
-                editors: {}
+                editors: {},
+                submitting: {}
             }
         },
         methods: {
             selectSelf(id){
                 if(this.deleting){
                     let isSelected = !this.selected[id];
-                    this.$set(this.selected, id, isSelected);
+
+                    if(isSelected){
+                        this.$set(this.selected, id, true);
+                    }
+                    else {
+                        this.$delete(this.selected, id);
+                    }
+
                     this.$emit('select', id, isSelected)
                 }
             },
             editSelf(id){
                 if(this.editing){
-                    let hasEditor = !this.editors[id];
-                    this.$set(this.editors, id, hasEditor);
+                    if(this.editors[id]){
+                        this.$delete(this.editors, id);
+                    }
+                    else {
+                        this.$set(this.editors, id, true);
+                    }
                 }
             },
-            submit(){
-                console.log(arguments);
-            },
+            submit(oldItem, {item, callback}){
+                let id = oldItem.id;
 
-            autocomplete: require('./../js/io').autocomplete
+                this.$set(this.submitting, id, true);
+
+                io.items.edit(id, item)
+                .then(() => {
+                    item.id = id;
+                    this.$emit('itemChanged', {
+                        item,
+                        index: this.items.indexOf(oldItem)
+                    });
+                })
+                .then(() => {
+                    this.$delete(this.submitting, id);
+                    this.$delete(this.editors, id);
+                });
+            },
+            dateChanged(item, date){
+                item.date = date;
+            },
+            autocomplete: io.autocomplete
         },
         watch: {
             deleting(){

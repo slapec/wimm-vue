@@ -1,7 +1,8 @@
 <template>
     <form class="item-form" @submit.prevent="submit">
         <tags :choices="autocomplete"
-              :tags="tags"
+              :tags="pTags"
+              :disabled="disabled"
               @blur="focusPrice()"
         ></tags>
         <input type="text"
@@ -11,8 +12,8 @@
                required
                v-if="!datehidden"
                @input="dateChanged($event.target.value)"
-               v-bind:value="date"
-               v-bind:disabled="disabled">
+               :value="date"
+               :disabled="disabled">
         <input type="number"
                class="price numeric"
                step="0.01"
@@ -20,8 +21,8 @@
                placeholder="Price"
                required
                ref="price"
-               v-model="price"
-               v-bind:disabled="disabled">
+               v-model="pPrice"
+               :disabled="disabled">
     </form>
 </template>
 
@@ -34,12 +35,12 @@
         },
         props: {
             date: String,
-            initPrice: {
+            price: {
                 type: [Number, String],
                 required: false,
                 default: () => null
             },
-            initTags: {
+            tags: {
                 type: Array,
                 required: false,
                 default: () => []
@@ -47,26 +48,30 @@
             disabled: Boolean,
             datehidden: String
         },
-        data: function(){
+        data(){
             return {
-                price: this.initPrice,
-                tags: this.initTags.slice()
+                pPrice: this.price,
+                pTags: this.tags.slice()
             }
         },
         methods: {
             autocomplete: require('./../js/io').autocomplete,
             dateChanged(value){
-                this.$emit('datechanged', value);
+                this.$emit('dateChanged', value);
             },
-            submit: function(e){
-                let formData = new FormData();
-                formData.append('price', this.price);
-                formData.append('date', this.date);
-                formData.append('tags', this.tags);
+            submit(){
+                let item = {
+                    price: this.pPrice,
+                    date: this.date,
+                    tags: this.pTags
+                };
 
-                this.$emit('submit', formData, () => {
-                    this.price = null;
-                    this.tags.splice(0, this.tags.length);
+                this.$emit('submit', {
+                    item,
+                    callback: () => {
+                        this.pPrice = null;
+                        this.pTags.splice(0, this.pTags.length);
+                    }
                 });
             },
             focusPrice(){

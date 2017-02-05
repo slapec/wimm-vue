@@ -8,12 +8,12 @@
             <div class="button-group main">
                 <button id="edit" class="i"
                         :class="{'i-mode_edit': !editing, 'i-close': editing, disabled: deleting}"
-                        v-bind:disabled="deleting"
+                        :disabled="deleting"
                         @click="editing = !editing">
                 </button>
                 <button id="delete" class="i"
                         :class="{'i-delete': !deleting, 'i-close': deleting, disabled: editing}"
-                        v-bind:disabled="editing"
+                        :disabled="editing"
                         @click="deleting = !deleting">
                 </button>
             </div>
@@ -44,13 +44,14 @@
                         :items="dateItems.items"
                         :deleting="deleting"
                         :editing="editing"
-                        @select="itemSelected">
+                        @select="itemSelected"
+                        @itemChanged="itemChanged(dateItems, $event)">
             </date-items>
         </div>
 
         <div id="main-item-form"
             v-show="canNavigate">
-            <item-form id="item-form-0" @submit="submit" :date="today" @datechanged="dateChanged" :disabled="submitting"></item-form>
+            <item-form id="item-form-0" @submit="submit" :date="today" @dateChanged="dateChanged" :disabled="submitting"></item-form>
             <button type="submit" form="item-form-0" class="i i-add" v-bind:disabled="submitting"></button>
         </div>
     </div>
@@ -122,12 +123,13 @@
                     this.selected = new Set();
                 });
             },
-            submit(formData, callback){
+            submit({item, callback}){
                 this.submitting = true;
 
-                io.items.add(formData)
+                io.items.add(item)
                 .then(item => {
                     let [date] = this.dates.filter(d => d.date === item.date);
+                    item.item.price = Number(item.item.price);
 
                     if(date){
                         date.items.push(item.item);
@@ -176,6 +178,31 @@
                 }
                 else {
                     selected.delete(id);
+                }
+            },
+            itemChanged(dateItems, {item, index}){
+                if(item.date === dateItems.date){
+                    dateItems.items[index] = item;
+                }
+                else {
+                    dateItems.items.splice(index, 1);
+                    if(!dateItems.items.length){
+                        this.dates.splice(this.dates.indexOf(dateItems), 1);
+                    }
+
+                    [dateItems] = this.dates.filter(d => d.date === item.date);
+
+                    if(dateItems){
+                        dateItems.items.push(item);
+                    }
+                    else {
+                        this.dates.push({
+                            date: item.date,
+                            items: [item]
+                        });
+                    }
+
+                    this.dates.sort((left, right) => (left.date > right.date) - (left.date < right.date));
                 }
             },
             deleteSelected(){

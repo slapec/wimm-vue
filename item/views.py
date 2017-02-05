@@ -2,10 +2,8 @@
 
 import datetime
 import json
-from typing import List
 from itertools import groupby
 
-from django.core.urlresolvers import reverse
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -53,7 +51,7 @@ class YearMonthItemApi(View):
 
 class ItemApi(View):
     def post(self, request):
-        form = ItemForm(request.POST or None)
+        form = ItemForm(request.POST)
 
         if form.is_valid():
             item = form.save()
@@ -69,11 +67,21 @@ class ItemApi(View):
             raise NotImplementedError(form.errors)
 
     def delete(self, request):
-        form = ItemDeleteForm(json.loads(request.body.decode()))
+        form = ItemDeleteForm(request.DELETE)
         if form.is_valid():
             with transaction.atomic():
                 form.cleaned_data['items'].delete()
                 return JsonResponse({})
+        else:
+            raise NotImplementedError(form.errors)
+
+    def patch(self, request, item_id: int):
+        item = Item.objects.get(pk=item_id)
+        form = ItemForm(request.PATCH, instance=item)
+
+        if form.is_valid():
+            form.save()
+            return JsonResponse({})
         else:
             raise NotImplementedError(form.errors)
 

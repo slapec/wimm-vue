@@ -4,6 +4,23 @@ function getCsrfToken(){
     return (document.cookie.match(/(^|; )csrftoken=([^;]*)/)||0)[2]
 }
 
+function getHeaders(){
+    return new Headers({'X-CSRFToken': getCsrfToken()});
+}
+
+function toJson(data){
+    return {
+        body: new Blob([JSON.stringify(data)], {type: 'application/json'}),
+        headers: getHeaders(),
+    }
+}
+
+function prepareItem(item){
+    item = Object.assign({}, item);
+    item.tags = item.tags.join(',');
+    return item;
+}
+
 module.exports.autocomplete = function(term){
     if(term){
         return fetch(`/autocomplete/tags?term=${term}`)
@@ -17,36 +34,55 @@ module.exports.autocomplete = function(term){
 module.exports.items = {
     loadMonth({year, month}){
         return fetch(`/items/${year}/${month}/`)
-            .then(v => v.json());
+            .then(v => v.json())
+            .then(data => {
+                data.forEach(date => {
+                    date.items.forEach(item => {
+                        item.date = date.date
+                    })
+                });
+
+                return data;
+            });
     },
-    add(formData){
-        return fetch('/items/', {
-            method: 'POST',
-            body: formData,
-            credentials: 'same-origin',
-            headers: new Headers({
-                'X-CSRFToken': getCsrfToken()
+    add(item){
+        if(item){
+            item = prepareItem(item);
+
+            return fetch('/items/', Object.assign({
+                method: 'POST',
+                credentials: 'same-origin',
+            }, toJson(item)))
+            .then(v => v.json())
+            .then(data => {
+                data.item.date = data.date;
+
+                return data;
             })
-        })
-        .then(v => v.json());
-    },
-    remove(items){
-        if(!items.length){
+        }
+        else {
             return Promise.resolve();
         }
+    },
+    remove(items){
+        if(items.length){
+            return fetch('/items/', Object.assign({
+                method: 'DELETE',
+                credentials: 'same-origin',
+            }, toJson({'items': items})))
+            .then(v => v.json());
+        }
+        else {
+            return Promise.resolve();
+        }
+    },
+    edit(id, item){
+        item = prepareItem(item);
 
-        let body = new Blob([JSON.stringify({
-            'items': items
-        })], {type: 'application/json'});
-
-        return fetch('/items/', {
-            method: 'DELETE',
-            body: body,
+        return fetch(`/items/${id}/`, Object.assign({
+            method: 'PATCH',
             credentials: 'same-origin',
-            headers: new Headers({
-                'X-CSRFToken': getCsrfToken()
-            })
-        })
+        }, toJson(item)))
         .then(v => v.json());
     }
 };

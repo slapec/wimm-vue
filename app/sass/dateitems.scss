@@ -29,11 +29,19 @@
         background: $date-items-li-selected-background;
       }
 
+      &.submitting {
+        background: $date-items-li-submitting-background;
+      }
+
       &:nth-of-type(odd){
         background: $date-items-li-odd-background;
 
         &.selected {
           background: $date-items-li-selected-odd-background;
+        }
+
+        &.submitting {
+          background: $date-items-li-submitting-odd-background;
         }
       }
 
@@ -67,6 +75,15 @@
         .tags {
           background: $main-item-form-input-background;
           margin-bottom: $main-item-form-input-bottom-margin;
+
+          &.disabled {
+            background: #ebebe4;
+
+            .tag {
+              background: #d3d3d0;
+              color: #595959
+            }
+          }
         }
       }
 
