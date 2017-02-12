@@ -19,7 +19,7 @@ function prepareItem(item){
 
 module.exports.autocomplete = function(term){
     if(term){
-        return fetch(`${settings.root}/autocomplete/tags/?term=${term}`)
+        return fetch(`${settings.root}/autocomplete/tags/?term=${term}`, {credentials: 'same-origin'})
             .then(v => v.json());
     }
     else {
@@ -29,7 +29,7 @@ module.exports.autocomplete = function(term){
 
 module.exports.items = {
     loadMonth({year, month}){
-        return fetch(`${settings.root}/items/${year}/${month}/`)
+        return fetch(`${settings.root}/items/${year}/${month}/`, {credentials: 'same-origin'})
             .then(v => v.json())
             .then(data => {
                 data.forEach(date => {
