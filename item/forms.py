@@ -12,19 +12,6 @@ class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
         fields = ('date', 'price', 'tags')
-        widgets = {
-            'date': forms.TextInput(attrs={
-                'placeholder': _('Date'),
-                'class': 'numeric'
-            }),
-            'price': forms.NumberInput(attrs={
-                'placeholder': _('Price'),
-                'tabindex': 2,
-                'class': 'numeric',
-                'autocomplete': 'off'
-            }),
-            'tags': forms.TextInput(attrs={'placeholder': _('Tags'), 'tabindex': 1})
-        }
 
     def clean_price(self):
         price = self.cleaned_data['price']
@@ -36,13 +23,7 @@ class ItemForm(forms.ModelForm):
 
 
 class ItemDeleteForm(forms.Form):
-    items = forms.ModelMultipleChoiceField(queryset=Item.objects.none())
-
-    def __init__(self, *args, date, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        self.fields['items'].queryset = Item.objects.filter(date__year=date.year,
-                                                            date__month=date.month)
+    items = forms.ModelMultipleChoiceField(queryset=Item.objects.all())
 
 
 class ItemMetaAutoForm(forms.Form):

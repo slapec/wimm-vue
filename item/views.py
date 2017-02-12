@@ -1,120 +1,87 @@
 # coding: utf-8
 
 import datetime
-import json
 from itertools import groupby
 
-from dateutil.relativedelta import relativedelta
-from django.core.urlresolvers import reverse
+from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import render
-from django.utils import timezone, formats
-from django.views.generic import View, RedirectView
+from django.views.generic import View
 
 from item.forms import ItemForm, ItemDeleteForm, ItemMetaAutoForm
 from item.models import Item
 
 
-class RedirectToMonth(RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
-        today = timezone.now().date()
+class YearMonthItemApi(View):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        return reverse('item-list', args=(str(today.year), str(today.month).zfill(2)))
+        self.date = None
 
-
-class ItemApi(View):
-    def _serialize_item(self, item):
-        return {
-            'price': '{0:.2f}'.format(item.price),
-            'tags': sorted(item.tags.names()),
-            'id': item.id
-        }
-
-    def serialize(self, qs):
-        items_by_date = []
-
-        for date, items in groupby(qs, lambda item: item.date):
-            date_items = {
-                'date': date,
-                'items': [self._serialize_item(item) for item in items]
-            }
-
-            items_by_date.append(date_items)
-
-        return items_by_date
-
-    def get_queryset(self, date):
+    def get_queryset(self, date: datetime.date):
         return Item.objects.filter(date__year=date.year, date__month=date.month)
 
-    def dispatch(self, request, *args, year, month, **kwargs):
+    def dispatch(self, request, *args, year: str, month: str, **kwargs):
         self.date = datetime.date(int(year), int(month), 1)
-
-        today = timezone.now().date()
-        if self.date.year == today.year and self.date.month == today.month:
-            self.initial_date = today
-        else:
-            self.initial_date = self.date
 
         return super().dispatch(request, *args, year, month, **kwargs)
 
-    def get(self, request, year, month):
-        next_ = self.date + relativedelta(months=1)
-        next_args = (str(next_.year), str(next_.month).zfill(2))
-
-        current_args = (year, month)
-
-        previous = self.date - relativedelta(months=1)
-        previous_args = (str(previous.year), str(previous.month).zfill(2))
-
+    def get(self, *args, **kwargs):
         qs = self.get_queryset(self.date)
 
-        page = {
-            'initial': self.initial_date,
-            'title': formats.date_format(self.date, 'Y / F'),
-            'dates': self.serialize(qs),
-            'pages': {
-                'next': {
-                    'api': reverse('item-api', args=next_args),
-                    'history': reverse('item-list', args=next_args)
-                },
-                'current': {
-                    'api': reverse('item-api', args=current_args),
-                    'history': reverse('item-list', args=current_args)
-                },
-                'previous': {
-                    'api': reverse('item-api', args=previous_args),
-                    'history': reverse('item-list', args=previous_args)
-                }
-            }
-        }
+        date_item_list = []
 
-        return JsonResponse(page, safe=False)
+        for date, items in groupby(qs, lambda x: x.date):  # type: datetime.date, List[Item]
+            item_list = []
+            date_item_list.append({
+                'date': date.strftime('%Y-%m-%d'),
+                'items': item_list
+            })
 
-    def post(self, request, year, month):
-        form = ItemForm(request.POST or None, initial={'date': self.initial_date})
+            for item in items:
+                item_list.append({
+                    'price': '{0:.2f}'.format(item.price),
+                    'tags': list(item.tags.names()),
+                    'id': item.id
+                })
+
+        return JsonResponse(date_item_list, safe=False)
+
+
+class ItemApi(View):
+    def post(self, request):
+        form = ItemForm(request.POST)
 
         if form.is_valid():
             item = form.save()
-            if item.date.year == self.date.year and item.date.month == self.date.month:
-                result = {
-                    'date': item.date,
-                    'items': [self._serialize_item(item)]
+            return JsonResponse({
+                'date': item.date,
+                'item': {
+                    'price': '{0:.2f}'.format(item.price),
+                    'tags': list(item.tags.names()),
+                    'id': item.id
                 }
-            else:
-                result = {}
-            return JsonResponse(result, safe=False)
+            }, safe=False)
         else:
             raise NotImplementedError(form.errors)
 
-    def delete(self, request, year, month):
-        date = datetime.date(int(year), int(month), 1)
-
-        form = ItemDeleteForm(json.loads(request.body.decode()), date=date)
+    def delete(self, request):
+        form = ItemDeleteForm(request.DELETE)
         if form.is_valid():
             with transaction.atomic():
                 form.cleaned_data['items'].delete()
-                return JsonResponse(reverse('item-api', args=(year, month)), safe=False)
+                return JsonResponse({})
+        else:
+            raise NotImplementedError(form.errors)
+
+    def patch(self, request, item_id: int):
+        item = Item.objects.get(pk=item_id)
+        form = ItemForm(request.PATCH, instance=item)
+
+        if form.is_valid():
+            form.save()
+            return JsonResponse({})
         else:
             raise NotImplementedError(form.errors)
 
@@ -136,3 +103,12 @@ class ItemTagsAuto(View):
             return JsonResponse(form.cleaned_data['term'], safe=False)
         else:
             raise NotImplementedError(form.errors)
+
+
+class Index(View):
+    def get(self, request):
+        context = {
+            'root': settings.FORCE_SCRIPT_NAME
+        }
+
+        return render(request, 'index.html')

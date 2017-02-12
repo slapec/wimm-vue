@@ -1,0 +1,121 @@
+@import "consts";
+
+@import "itemform";
+
+#item-list {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  #title {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    background: $title-background;
+    border-bottom: $title-bottom-border;
+
+    button {
+      padding: $title-button-padding;
+      background: $title-button-background;
+      border: none;
+      border-left: $title-button-left-border;
+      font-size: $title-button-size;
+      outline: none;
+      cursor: pointer;
+
+      -webkit-tap-highlight-color: transparent;
+
+      &:active {
+        background: $title-button-active-background;
+      }
+    }
+
+    .h-fill {
+      flex: 1;
+      border-left: $title-button-left-border;
+    }
+
+    .button-group {
+      display: flex;
+      z-index: $layer-10;
+
+      &.main {
+        button {
+          &:first-child {
+            border-left: none;
+          }
+        }
+      }
+    }
+
+    .navigation {
+      button {
+        font-weight: bold;
+      }
+    }
+
+    #year-month {
+      position: absolute;
+      z-index: $layer-0;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      text-align: center;
+    }
+
+    .disabled {
+      color: $title-button-disabled-color;
+    }
+  }
+
+  #date-items-list {
+    padding: $date-item-list-padding;
+    overflow-y: auto;
+    flex-grow: 1;
+  }
+
+  #main-item-form {
+    display: flex;
+    flex-shrink: 0;
+    background: $main-item-form-background;
+    border-top: $main-item-form-border;
+    padding: $main-item-form-padding;
+
+    .item-form {
+      flex-grow: 1;
+      margin-right: $main-item-form-right-margin;
+
+      .tags {
+        background: $main-item-form-input-background;
+        margin-bottom: $main-item-form-input-bottom-margin;
+      }
+    }
+
+    button[type=submit] {
+      width: $main-item-form-submit-width;
+      background: $main-item-form-submit-background;
+      color: $main-item-form-submit-color;
+      border: $main-item-form-submit-border-width solid $main-item-form-submit-color;
+      font-size: $main-item-form-submit-font-size;
+      font-weight: $main-item-form-submit-font-weight;
+      outline: none;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+
+      &:active {
+        color: $main-item-form-submit-background;
+        background: $main-item-form-submit-color;
+      }
+
+      &:disabled {
+        $color: lighten(grayscale($main-item-form-submit-color), 30);
+        color: $color;
+        background: lighten(grayscale($main-item-form-submit-background), 30);
+        border: $main-item-form-submit-border-width solid $color;
+        cursor: default;
+      }
+    }
+  }
+}
