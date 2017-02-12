@@ -111,4 +111,4 @@ class Index(View):
             'root': settings.FORCE_SCRIPT_NAME
         }
 
-        return render(request, 'index.html')
+        return render(request, 'index.html', context)
