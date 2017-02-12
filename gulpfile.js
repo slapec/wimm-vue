@@ -44,7 +44,7 @@ gulp.task('build:js', () => {
     let b = browserify({
             entries: [PATHS.main],
             transform: [vueify],
-            debug: true
+            debug: false
         });
 
     b.on('log', util.log);
