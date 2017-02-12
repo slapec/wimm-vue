@@ -1,0 +1,6 @@
+{
+  "name": "wimm",
+  "short_name": "wimm",
+  "start_url": "../../",
+  "display": "standalone"
+}

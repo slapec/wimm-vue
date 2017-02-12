@@ -1,11 +1,7 @@
-// Credit goes to http://stackoverflow.com/a/5639455
-
-function getCsrfToken(){
-    return (document.cookie.match(/(^|; )csrftoken=([^;]*)/)||0)[2]
-}
+const settings = require('./settings');
 
 function getHeaders(){
-    return new Headers({'X-CSRFToken': getCsrfToken()});
+    return new Headers({'X-CSRFToken': settings.csrftoken});
 }
 
 function toJson(data){
@@ -23,7 +19,7 @@ function prepareItem(item){
 
 module.exports.autocomplete = function(term){
     if(term){
-        return fetch(`/autocomplete/tags?term=${term}`)
+        return fetch(`${settings.root}/autocomplete/tags/?term=${term}`)
             .then(v => v.json());
     }
     else {
@@ -33,7 +29,7 @@ module.exports.autocomplete = function(term){
 
 module.exports.items = {
     loadMonth({year, month}){
-        return fetch(`/items/${year}/${month}/`)
+        return fetch(`${settings.root}/items/${year}/${month}/`)
             .then(v => v.json())
             .then(data => {
                 data.forEach(date => {
@@ -49,7 +45,7 @@ module.exports.items = {
         if(item){
             item = prepareItem(item);
 
-            return fetch('/items/', Object.assign({
+            return fetch(`${settings.root}/items/`, Object.assign({
                 method: 'POST',
                 credentials: 'same-origin',
             }, toJson(item)))
@@ -66,7 +62,7 @@ module.exports.items = {
     },
     remove(items){
         if(items.length){
-            return fetch('/items/', Object.assign({
+            return fetch(`${settings.root}/items/`, Object.assign({
                 method: 'DELETE',
                 credentials: 'same-origin',
             }, toJson({'items': items})))
@@ -79,7 +75,7 @@ module.exports.items = {
     edit(id, item){
         item = prepareItem(item);
 
-        return fetch(`/items/${id}/`, Object.assign({
+        return fetch(`${settings.root}/items/${id}/`, Object.assign({
             method: 'PATCH',
             credentials: 'same-origin',
         }, toJson(item)))

@@ -13,9 +13,11 @@
             <input ref="tagInput"
                    v-model="currentTag"
                    @keydown="keydown"
+                   @input="input"
                    @blur="add"
                    :disabled="disabled">
             <ul v-if="choiceListVisible"
+                ref="choiceList"
                 :class="{dropup: dropup}">
                 <li ref="choices"
                     v-for="(tag, index) of pChoices"
@@ -71,11 +73,15 @@
                 dropup: false,
                 selectedIndex: UNDEFINED,
 
+                pressedKey: null,
+
                 deferBlur: false
             };
         },
         methods: {
             keydown(e){
+                this.pressedKey = e.key;
+
                 if(e.key === 'Backspace'){
                     if(!this.currentTag){
                         e.preventDefault();
@@ -116,23 +122,65 @@
 
                         this.$nextTick(() => {
                             let target = this.$refs.choices[this.selectedIndex];
-//                            console.log(target.parentElement.scrollTop, target.getBoundingClientRect().top, target.parentElement.getBoundingClientRect().top);
-//                            target.parentElement.scrollTop = target.getBoundingClientRect().top - target.parentElement.getBoundingClientRect().top;
-//                            console.log(target.parentElement.scrollTop, target.getBoundingClientRect().top, target.parentElement.getBoundingClientRect().top, '<');
+                            let choiceList = this.$refs.choiceList;
+                            let visibleHeight = choiceList.getBoundingClientRect().height;
+                            let scrollTop;
+
+                            if(this.dropup){
+                                let invisibleHeight = choiceList.scrollHeight - visibleHeight;
+
+                                scrollTop = invisibleHeight + target.offsetTop;
+
+                                if(!(scrollTop > choiceList.scrollTop && scrollTop < choiceList.scrollTop + visibleHeight)){
+                                    choiceList.scrollTop = scrollTop;
+                                }
+                            }
+                            else {
+                                let targetHeight = target.getBoundingClientRect().height;
+                                scrollTop = target.offsetTop + targetHeight;
+
+                                if(scrollTop < choiceList.scrollTop){
+                                    choiceList.scrollTop = scrollTop - targetHeight;
+                                }
+                                else if(scrollTop > choiceList.scrollTop + visibleHeight){
+                                    choiceList.scrollTop = scrollTop - visibleHeight + 2;
+                                }
+                            }
                         });
                     }
                     else if(key === 'ArrowUp'){
                         e.preventDefault();
 
                         let n = this.pChoices.length;
-                        this.selectedIndex = (((this.selectedIndex - 1) % n) + n ) % n;
+                        this.selectedIndex = ((Math.max(-1, this.selectedIndex - 1) % n) + n ) % n;
                         this.currentTag = this.pChoices[this.selectedIndex];
 
                         this.$nextTick(() => {
                             let target = this.$refs.choices[this.selectedIndex];
-//                            console.log(target.parentElement.scrollTop, target.getBoundingClientRect().top, target.parentElement.getBoundingClientRect().top);
-//                            target.parentElement.scrollTop = target.getBoundingClientRect().top - target.parentElement.getBoundingClientRect().top;
-//                            console.log(target.parentElement.scrollTop, target.getBoundingClientRect().top, target.parentElement.getBoundingClientRect().top, '<');
+                            let targetHeight = target.getBoundingClientRect().height;
+                            let choiceList = this.$refs.choiceList;
+                            let visibleHeight = choiceList.getBoundingClientRect().height;
+                            let scrollTop;
+
+                            if(this.dropup){
+                                let invisibleHeight = choiceList.scrollHeight - visibleHeight;
+
+                                scrollTop = invisibleHeight + target.offsetTop + targetHeight;
+
+                                if(scrollTop < choiceList.scrollTop){
+                                    choiceList.scrollTop = scrollTop - targetHeight;
+                                }
+                                else if(scrollTop > choiceList.scrollTop + visibleHeight){
+                                    choiceList.scrollTop = scrollTop - visibleHeight + 5;
+                                }
+                            }
+                            else {
+                                scrollTop = target.offsetTop;
+
+                                if(!(scrollTop > choiceList.scrollTop && scrollTop < choiceList.scrollTop + visibleHeight)){
+                                    choiceList.scrollTop = scrollTop;
+                                }
+                            }
                         });
                     }
                     else if(e.key.length === 1 || CHOICE_WHITELIST.has(e.key)){
@@ -142,6 +190,9 @@
                 else {
                     this.resolveRequired = true;
                 }
+            },
+            input(e){
+                this.resolveRequired = true;
             },
             add(e, tag){
                 if(tag){

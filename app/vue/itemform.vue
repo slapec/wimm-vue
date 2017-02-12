@@ -59,9 +59,24 @@
             dateChanged(value){
                 this.$emit('dateChanged', value);
             },
+            rawPrice(){
+                let price = this.$refs.price;
+
+                price.select();
+                let value = window.getSelection().toString();
+                price.blur();
+
+                let sign = value[0];
+
+                if(!(sign === '+') && !(sign === '-')){
+                    value = -1 * Number(value);
+                }
+
+                return value;
+            },
             submit(){
                 let item = {
-                    price: this.pPrice,
+                    price: this.rawPrice(),
                     date: this.date,
                     tags: this.pTags
                 };

@@ -124,6 +124,7 @@
                 });
             },
             submit({item, callback}){
+                let scrollRequired = false;
                 this.submitting = true;
 
                 io.items.add(item)
@@ -133,16 +134,23 @@
 
                     if(date){
                         date.items.push(item.item);
+                        scrollRequired = true;
                     }
                     else {
-                        this.dates.push({
-                            date: item.date,
-                            items: [item.item]
-                        });
-                        this.dates.sort((left, right) => (left.date > right.date) - (left.date < right.date));
+                        if(moment(item.date, 'YYYY-MM-DD').format('YYYY-MM') === this._yearMonth.format('YYYY-MM')){
+                            this.dates.push({
+                                date: item.date,
+                                items: [item.item]
+                            });
+                            this.dates.sort((left, right) => (left.date > right.date) - (left.date < right.date));
+
+                            scrollRequired = true;
+                        }
                     }
 
-                    this.$nextTick(() => document.getElementById(`item-${item.item.id}`).scrollIntoView(false));
+                    if(scrollRequired){
+                        this.$nextTick(() => document.getElementById(`item-${item.item.id}`).scrollIntoView(false));
+                    }
                 })
                 .then(() => {
                     callback();

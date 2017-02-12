@@ -1,9 +1,9 @@
 # coding: utf-8
 
 import datetime
-import json
 from itertools import groupby
 
+from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -107,4 +107,8 @@ class ItemTagsAuto(View):
 
 class Index(View):
     def get(self, request):
+        context = {
+            'root': settings.FORCE_SCRIPT_NAME
+        }
+
         return render(request, 'index.html')

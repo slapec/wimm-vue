@@ -14,12 +14,19 @@
 
     <link rel="stylesheet" href="{% static 'app/icomoon.css' %}">
     <link rel="stylesheet" href="{% static 'app/style.css' %}">
+    <link rel="manifest" href="{% static 'app/manifest.webmanifest' %}">
 </head>
 <body>
     <div id="wimm">
         <router-view></router-view>
     </div>
 
+    <script>
+        settings = {
+            csrftoken: '{{ csrf_token }}',
+            root: '{{ root }}'
+        }
+    </script>
     <script src="{% static 'app/main.js' %}"></script>
 </body>
 </html>

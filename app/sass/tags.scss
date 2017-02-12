@@ -41,7 +41,10 @@
   &.conflict {
     li.tag-input {
       background: $error-background;
-      color: $error-color;
+
+      input {
+        color: $error-color;
+      }
     }
   }
 
@@ -74,6 +77,10 @@
 
       &:nth-child(odd){
         background: #f6f6f6;
+      }
+
+      &.tag-choice-selected {
+        background: $tag-background;
       }
     }
 
