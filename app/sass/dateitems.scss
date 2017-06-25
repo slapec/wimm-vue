@@ -13,12 +13,17 @@
     text-align: center;
     padding: $date-items-head-padding;
     border-bottom: $date-items-head-bottom-border;
+    
+    span {
+      display: table-cell;
+    }
   }
 
   .items {
     margin: 0;
     padding: 0;
     list-style-type: none;
+    clear: both;
 
     & > li {
       display: flex;

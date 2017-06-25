@@ -1,6 +1,8 @@
 <template>
     <div class="date-items">
-        <div class="numeric date-items-head">{{ date }}</div>
+        <div class="numeric date-items-head">
+            <span>{{ date }}</span>
+            <span>{{ dailyExpense | money }}</span>
         <ul class="items">
             <li v-for="item of items"
                 :key="item.id" :id="'item-' + item.id"
@@ -145,6 +147,20 @@
                 }
 
                 return value;
+            }
+        },
+        computed: {
+            dailyExpense(){
+                var expense = 0;
+                for(var key in this.items){
+                    if (!this.items.hasOwnProperty(key))
+                        continue;
+                    var item = this.items[key];
+                    console.log(key, item);
+                    if (item.price<0) 
+                        expense = expense + item.price;
+                }
+                return expense;
             }
         }
     }
