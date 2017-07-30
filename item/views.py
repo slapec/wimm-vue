@@ -108,7 +108,7 @@ class ItemTagsAuto(View):
 class Index(View):
     def get(self, request):
         context = {
-            'root': settings.FORCE_SCRIPT_NAME
+            'root': settings.FORCE_SCRIPT_NAME or ''
         }
 
         return render(request, 'index.html', context)
