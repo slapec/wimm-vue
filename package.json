@@ -32,7 +32,8 @@
     "vue": "vue/dist/vue.common"
   },
   "scripts": {
-    "uglifyjs": "uglifyjs"
+    "uglifyjs": "uglifyjs",
+"gulp": "gulp"
   },
   "dependencies": {
     "moment": "^2.17.1"
