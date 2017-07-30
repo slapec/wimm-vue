@@ -13,6 +13,11 @@
     text-align: center;
     padding: $date-items-head-padding;
     border-bottom: $date-items-head-bottom-border;
+    display: flex;
+
+    .date {
+      flex-grow: 1;
+    }
   }
 
   .items {

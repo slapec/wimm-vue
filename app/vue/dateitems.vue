@@ -1,6 +1,9 @@
 <template>
     <div class="date-items">
-        <div class="numeric date-items-head">{{ date }}</div>
+        <div class="numeric date-items-head">
+            <div class="date">{{ date }}</div>
+            <div>{{ dailyExpense | money }}</div>
+        </div>
         <ul class="items">
             <li v-for="item of items"
                 :key="item.id" :id="'item-' + item.id"
@@ -145,6 +148,13 @@
                 }
 
                 return value;
+            }
+        },
+        computed: {
+            dailyExpense(){
+                return this.items.reduce((sum, item) =>
+                    item.price < 0 ? sum + item.price : sum,
+                0);
             }
         }
     }
