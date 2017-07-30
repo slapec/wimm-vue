@@ -12,14 +12,13 @@ function toJson(data){
 }
 
 function prepareItem(item){
-    item = Object.assign({}, item);
-    item.tags = item.tags.join(',');
+    // TODO: Remove
     return item;
 }
 
 module.exports.autocomplete = function(term){
     if(term){
-        return fetch(`${settings.root}/autocomplete/tags/?term=${term}`, {credentials: 'same-origin'})
+        return fetch(`${settings.root}/api/autocomplete/?term=${term}`, {credentials: 'same-origin'})
             .then(v => v.json());
     }
     else {
@@ -29,7 +28,7 @@ module.exports.autocomplete = function(term){
 
 module.exports.items = {
     loadMonth({year, month}){
-        return fetch(`${settings.root}/items/${year}/${month}/`, {credentials: 'same-origin'})
+        return fetch(`${settings.root}/api/items/?year=${year}&month=${month}`, {credentials: 'same-origin'})
             .then(v => v.json())
             .then(data => {
                 data.forEach(date => {
@@ -45,7 +44,7 @@ module.exports.items = {
         if(item){
             item = prepareItem(item);
 
-            return fetch(`${settings.root}/items/`, Object.assign({
+            return fetch(`${settings.root}/api/items/`, Object.assign({
                 method: 'POST',
                 credentials: 'same-origin',
             }, toJson(item)))
@@ -62,7 +61,7 @@ module.exports.items = {
     },
     remove(items){
         if(items.length){
-            return fetch(`${settings.root}/items/`, Object.assign({
+            return fetch(`${settings.root}/api/items/`, Object.assign({
                 method: 'DELETE',
                 credentials: 'same-origin',
             }, toJson({'items': items})))
@@ -75,7 +74,7 @@ module.exports.items = {
     edit(id, item){
         item = prepareItem(item);
 
-        return fetch(`${settings.root}/items/${id}/`, Object.assign({
+        return fetch(`${settings.root}/api/items/${id}/`, Object.assign({
             method: 'PATCH',
             credentials: 'same-origin',
         }, toJson(item)))
