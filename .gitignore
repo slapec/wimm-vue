@@ -1,5 +1,3 @@
-.vscode/
-
 # Logs
 logs
 *.log
@@ -176,3 +174,19 @@ settings.py
 dev_settings.py
 *.sqlite3
 wimm.ini
+
+.DS_Store
+node_modules/
+dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+test/unit/coverage
+
+# Editor directories and files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+.vscode/
