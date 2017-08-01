@@ -1,15 +1,13 @@
-import Vue from 'vue'
-import Router from 'vue-router'
+import Vue from 'vue';
+import Router from 'vue-router';
 
-import moment from 'moment'
+import GraphSum from '@/components/graph-sum/component';
+import GraphSumHeader from '@/components/graph-sum/header';
+import ItemList from '@/components/item-list/component';
+import ItemListHeader from '@/components/item-list/header';
+import store from '@/store';
 
-import GraphSum from '@/components/graph-sum/component'
-import GraphSumHeader from '@/components/graph-sum/header'
-import ItemList from '@/components/item-list/component'
-import ItemListHeader from '@/components/item-list/header'
-
-
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   mode: 'hash',
@@ -17,8 +15,9 @@ export default new Router({
     {
       name: 'index',
       path: '/',
-      redirect () {
-        const now = moment()
+      redirect(){
+        const now = store.state.itemList.currentDate;
+
         return {
           name: 'item:list:year-month',
           params: {
@@ -45,4 +44,4 @@ export default new Router({
       }
     }
   ]
-})
+});

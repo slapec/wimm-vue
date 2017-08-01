@@ -1,15 +1,19 @@
 <template>
   <div id="app">
-    <sidebar :visible="ui.sidebarVisible" @toggle="toggleSidebar()"></sidebar>
+    <sidebar></sidebar>
+    <div id="spinner" :class="{visible: spinnerVisible}"></div>
     <div id="overlay" :class="{visible: overlayVisible}"></div>
-    <header-bar @toggleSidebar="toggleSidebar()"></header-bar>
-    <router-view id="default-router-view"></router-view>
+    <header-bar v-if="!isInitializing"></header-bar>
+    <router-view id="default-router-view" v-if="!isInitializing"></router-view>
   </div>
 </template>
 
 <script>
-  import Sidebar from './components/sidebar'
-  import HeaderBar from './containers/header-bar'
+  import {mapActions, mapGetters, mapState} from 'vuex';
+
+  import HeaderBar from './containers/header-bar';
+  import io from './services/io'
+  import Sidebar from './components/sidebar';
 
   export default {
     name: 'app',
@@ -17,27 +21,29 @@
       Sidebar,
       HeaderBar
     },
-    data(){
-      return {
-        ui: {
-          sidebarVisible: false
-        }
-      }
+    computed: {
+      ...mapGetters('ui', [
+        'overlayVisible', 'spinnerVisible'
+      ]),
+      ...mapState('app', [
+        'isInitializing'
+      ])
     },
     methods: {
-      toggleSidebar(){
-        this.ui.sidebarVisible = !this.ui.sidebarVisible;
-      }
-    },
-    computed: {
-      overlayVisible(){
-        return this.ui.sidebarVisible;
-      }
+      ...mapActions('ui', [
+        'hideUi'
+      ]),
+      ...mapActions('app', [
+        'initialized'
+      ])
     },
     watch: {
       $route(route){
-        this.ui.sidebarVisible = false
+        this.hideUi();
       }
+    },
+    created(){
+      io.initialized.then(() => {this.initialized()});
     }
   }
 </script>
@@ -66,6 +72,7 @@
 
   #default-router-view {
     overflow: auto;
+    height: 100%;
   }
 
   #overlay {
@@ -94,4 +101,36 @@
       top: 0;
       z-index: $layer-50;
     }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  #spinner {
+    position: fixed;
+    visibility: hidden;
+    z-index: $layer-60;
+
+    &::after {
+      content: '';
+      position: fixed;
+      width: 96px;
+      height: 96px;
+      top: calc(50% - 48px);
+      left: calc(50% - 48px);
+      border-radius: 50%;
+      border: 8px solid #286d81;
+      border-left-color: transparent;
+      animation: spin 2s infinite linear;
+    }
+
+    &.visible {
+      visibility: visible;
+    }
+  }
 </style>

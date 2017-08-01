@@ -1,7 +1,7 @@
 <template>
   <div id="sidebar">
     <ol :class="{visible}">
-      <router-link tag="li" :to="{name: 'item:list:year-month'}">Item overview</router-link>
+      <router-link tag="li" :to="{name: 'index'}">Item overview</router-link>
       <router-link tag="li" :to="{name: 'graph:sum'}">Sum graph</router-link>
     </ol>
     <div class="overlay-close" v-if="visible" @click="toggle()"></div>
@@ -9,12 +9,18 @@
 </template>
 
 <script>
+  import {mapActions, mapState} from "vuex";
+
   export default {
-    props: ['visible'],
+    computed: {
+      ...mapState('ui', {
+        visible: 'sidebarVisible'
+      })
+    },
     methods: {
-      toggle(){
-        this.$emit('toggle');
-      }
+      ...mapActions('ui', {
+        toggle: 'toggleSidebar'
+      })
     }
   }
 </script>

@@ -5,12 +5,12 @@
     <button class="i"
             :class="{'i-mode_edit': !isEditing, 'i-close': isEditing}"
             :disabled="isEditingDisabled"
-            @click="isEditing = !isEditing">
+            @click="toggleEditing()">
     </button>
     <button class="i"
             :class="{'i-delete': !isDeleting, 'i-close': isDeleting}"
             :disabled="isDeletingDisabled"
-            @click="isDeleting = !isDeleting">
+            @click="toggleDeleting()">
     </button>
 
     <div class="fill"></div>
@@ -28,47 +28,29 @@
 
 <script>
   import moment from 'moment';
-
-  import io from '../../services/io';
-  import bus from './bus';
+  import {mapActions, mapGetters, mapState} from "vuex";
 
   export default {
-    data(){
-      return {
-        currentDateFormatted: '',
-        currentDate: null,
-        selected: new Set(),
-
-        isEditing: false,
-        isDeleting: false
-      }
-    },
     computed: {
-      isEditingDisabled(){
-        return this.isDeleting;
-      },
-      isDeletingDisabled(){
-        return this.isEditing;
-      },
-      canNavigate(){
-        return !(this.isEditing || this.isDeleting);
-      }
-    },
-    mounted(){
-      bus.$on('setCurrentDate', currentDate =>{
-        this.currentDate = currentDate;
-        this.currentDateFormatted = currentDate.format('YYYY / MMMM');
-      })
+      ...mapState('itemList', [
+        'isEditing', 'isDeleting', 'currentDate'
+      ]),
+      ...mapGetters('itemList', [
+        'isEditingDisabled', 'isDeletingDisabled', 'canNavigate', 'currentDateFormatted'
+      ])
     },
     methods: {
+      ...mapActions('itemList', [
+        'toggleEditing', 'toggleDeleting'
+      ]),
       seekMonth(direction){
-        let nextMonth;
+        let nextMonth = this.currentDate.clone();
 
         if(direction > 0){
-          nextMonth = this.currentDate.add(1, 'month');
+          nextMonth.add(1, 'month');
         }
         else if(direction < 0){
-          nextMonth = this.currentDate.subtract(1, 'month');
+          nextMonth.subtract(1, 'month');
         }
         else {
           throw new Error('direction must be +1 or -1');
