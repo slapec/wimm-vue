@@ -6,11 +6,11 @@
 </template>
 
 <script>
+  import { mapActions } from 'vuex';
+
   export default {
     methods: {
-      toggleSidebar(){
-        this.$emit('toggleSidebar');
-      }
+      ...mapActions('ui', ['toggleSidebar'])
     }
   };
 </script>

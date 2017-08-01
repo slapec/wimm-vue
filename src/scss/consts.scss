@@ -5,6 +5,8 @@ $border: 1px solid $border-color;
 $font-size: 14pt;
 $font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 $color-main-divider: #9a9a9a;
+$input-background: $bg-ui;
+$input-spacing: 4px;
 
 $header-bottom-border: 1px solid $color-main-divider;
 $header-btn-padding: 4px;
@@ -22,6 +24,19 @@ $sidebar-li-link-active: $sidebar-li-hover;
 $overlay-bg: #000;
 $overlay-transition: 0.2s ease;
 $overlay-opacity: 0.5;
+
+$main-item-form-submit-background: #39a2bf;
+$main-item-form-submit-border-color: #286d81;
+$main-item-form-border: $header-bottom-border;
+$main-item-form-padding: 3px;
+$main-item-form-margin-right: 3px;
+$main-item-form-input-background: $input-background;
+$main-item-form-input-bottom-margin: $input-spacing;
+$main-item-form-submit-width: auto;
+$main-item-form-submit-color: darken($main-item-form-submit-border-color, 14);
+$main-item-form-submit-border-width: 1px;
+$main-item-form-submit-font-size: 26pt;
+$main-item-form-submit-font-weight: bold;
 
 $layer-0: 0;
 $layer-10: 10;
