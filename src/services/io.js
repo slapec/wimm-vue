@@ -62,8 +62,8 @@ class Items extends BaseIONode {
     }
   }
 
-  edit(id, item){
-    return fetch(`${this.root}/items/${id}/`, {
+  edit(item){
+    return fetch(`${this.root}/items/${item.id}/`, {
       method: 'PATCH',
       credentials: 'same-origin',
       ...this.io.toJson(item)

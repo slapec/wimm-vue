@@ -1,10 +1,14 @@
 <template>
   <div>
     <div id="item-list">
-      <date-items></date-items>
+      <div id="date-items">
+        <date-items v-for="(dateItems, index) of dates" :key="dateItems.date"
+                    :index="index"></date-items>
+      </div>
 
       <div id="main-item-form" v-show="canNavigate">
-        <item-form id="item-form-0"></item-form>
+        <item-form id="item-form-0" :date="today" @dateChanged="setToday"
+                   :disabled="isSubmitting" @submit="doSubmit"></item-form>
         <button type="submit" form="item-form-0" class="i i-add"
                 :disabled="isSubmitting">
         </button>
@@ -28,7 +32,7 @@
     },
     computed: {
       ...mapState('itemList', [
-        'isSubmitting'
+        'isSubmitting', 'dates', 'today'
       ]),
       ...mapGetters('itemList', [
         'canNavigate'
@@ -36,7 +40,16 @@
       ...mapState('app', ['isInitializing'])
     },
     methods: {
-      ...mapActions('itemList', ['setCurrentDate'])
+      ...mapActions('itemList', ['setCurrentDate', 'setToday', 'submit']),
+      async doSubmit(...args){
+        const itemId = await this.submit(...args);
+        this.$nextTick(() => {
+          const elem = document.getElementById(`item-${itemId}`);
+          if(elem !== null){
+            elem.scrollIntoView(false);
+          }
+        })
+      }
     },
     created(){
       this.setCurrentDate(this.$route.params);
@@ -57,14 +70,59 @@
     flex-direction: column;
     height: 100%;
 
-    .date-items {
+    form.item-form {
+      display: flex;
+      flex-wrap: wrap;
+      position: relative;
+
+      .tags {
+        width: 100%;
+        border: $input-border;
+
+        .tag {
+          font-size: $input-font-size;
+        }
+
+        .tag-input {
+          input {
+            font-size: $input-font-size;
+          }
+
+          ul {
+            border: $item-form-tags-dropdown-border;
+          }
+        }
+      }
+
+      & > input {
+        box-sizing: border-box;
+        padding: $item-form-input-padding;
+        border: $input-border;
+        font-size: $input-font-size;
+
+        &.date {
+          width: $item-form-date-width;
+          margin-right: $item-form-date-right-margin;
+        }
+
+        &.price {
+          flex-grow: 1;
+          text-align: right;
+          width: 0;
+        }
+      }
+    }
+
+    #date-items {
       flex-grow: 1;
+      padding: $date-item-list-padding;
+      overflow: auto;
     }
 
     #main-item-form {
       display: flex;
       flex-shrink: 0;
-      background: $bg-ui;
+      background: $bg;
       border-top: $main-item-form-border;
       padding: $main-item-form-padding;
 
@@ -102,6 +160,10 @@
           cursor: default;
         }
       }
+    }
+
+    #date-items {
+      flex-grow: 1;
     }
   }
 </style>

@@ -133,4 +133,18 @@
       visibility: visible;
     }
   }
+
+  .numeric {
+  font-family: monospace;
+}
+
+.positive {
+  color: #1b9c0b;
+}
+
+.loading {
+  position: fixed;
+  width: 100%;
+}
+
 </style>

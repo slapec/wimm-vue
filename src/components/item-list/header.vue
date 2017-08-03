@@ -23,6 +23,10 @@
             v-if="canNavigate"
             @click="seekMonth(1)">
     </button>
+    <button id="delete-confirm" class="i i-check"
+            v-if="isDeleting"
+            @click="deleteSelected()">
+    </button>
   </div>
 </template>
 
@@ -41,7 +45,7 @@
     },
     methods: {
       ...mapActions('itemList', [
-        'toggleEditing', 'toggleDeleting'
+        'toggleEditing', 'toggleDeleting', 'deleteSelected'
       ]),
       seekMonth(direction){
         let nextMonth = this.currentDate.clone();
