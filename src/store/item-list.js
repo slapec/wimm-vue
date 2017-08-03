@@ -1,4 +1,5 @@
 import moment from 'moment';
+import Vue from 'vue';
 
 import io from '@/services/io';
 
@@ -12,6 +13,7 @@ export default {
     isEditing: false,
     isDeleting: false,
     isLoading: false,
+    isSubmitting: false,
     dates: [],
     selected: new Set()
   },
@@ -19,157 +21,141 @@ export default {
     isEditingDisabled: state => state.isDeleting,
     isDeletingDisabled: state => state.isEditing,
     canNavigate: state => !(state.isEditing || state.isDeleting),
-    currentDateFormatted: state => state.currentDate ? state.currentDate.format('YYYY / MMMM') : ''
+    currentDateFormatted: state => state.currentDate ? state.currentDate.format('YYYY / MMMM') : '',
+    isSelected: state => id => state.selected[id] !== undefined
   },
   mutations: {
-    toggle: (state, property) => state[property] = !state[property],
-    setCurrentDate: (state, nextDate) => {
+    toggle: (state, property) =>{
+      state[property] = !state[property];
+      state.selected = {};
+    },
+    setCurrentDate: (state, nextDate) =>{
       state.currentDate = nextDate;
-      state.isEditing = false;
-      state.isDeleting = false;
-      state.isLoading = false;
-      state.selected = new Set();
 
       const today = moment().format('YYYY-MM-DD');
       if(nextDate.format('YYYY-MM-DD') === today){
-        this.today = today
+        state.today = today
       }
       else {
-        this.today = nextDate.date(1).format('YYYY-MM-DD');
+        state.today = nextDate.date(1).format('YYYY-MM-DD');
       }
     },
-    setDates: (state, dates) => state.dates = dates,
-    fetchStarted: state => state.isLoading = true
-  },
-  actions: {
-    toggleEditing: ({commit}) => commit('toggle', 'isEditing'),
-    toggleDeleting: ({commit}) => commit('toggle', 'isDeleting'),
-    // .then(() =>{
-    //   let lastItem = document.querySelector('.date-items:last-child li:last-child');
-    //   if(lastItem){
-    //     lastItem.scrollIntoView()
-    //   }
-    // })
-    setCurrentDate: ({commit}, {year, month}) =>{
-      const yearMonth = moment().year(year).month(month).subtract(1, 'month');
-
-      commit('fetchStarted');
-
-      return io.items.fetchMonth({year, month})
-        .then(dates =>{
-          dates.sort((left, right) => (left.date > right.date) - (left.date < right.date))
-            .forEach(date => date.items.forEach(item =>{
-              item.price = Number(item.price)
-            }));
-
-          commit('setDates', dates);
-          commit('setCurrentDate', yearMonth)
-        })
-    }
-  }
-}
-
-/**
- submit({item, callback}){
-        let scrollRequired = false
-        this.submitting = true
-
-        io.items.add(item)
-          .then(item =>{
-            let [date] = this.dates.filter(d => d.date === item.date)
-            item.item.price = Number(item.item.price)
-
-            if(date){
-              date.items.push(item.item)
-              scrollRequired = true
-            }
-            else {
-              if(moment(item.date, 'YYYY-MM-DD').format('YYYY-MM') === this._yearMonth.format('YYYY-MM')){
-                this.dates.push({
-                  date: item.date,
-                  items: [item.item]
-                })
-                this.dates.sort((left, right) => (left.date > right.date) - (left.date < right.date))
-
-                scrollRequired = true
-              }
-            }
-
-            if(scrollRequired){
-              this.$nextTick(() => document.getElementById(`item-${item.item.id}`).scrollIntoView(false))
-            }
-          })
-          .then(() =>{
-            callback()
-            this.submitting = false
-          })
-      },
- dateChanged (date) {
-        this.today = date
-      },
-
-
- itemSelected(id, isSelected){
-      let selected = this.selected
-
+    setDates: (state, dates) =>{
+      state.dates = dates;
+      state.isEditing = false;
+      state.isDeleting = false;
+      state.isLoading = false;
+      state.selected = {};
+    },
+    fetchStarted: state => state.isLoading = true,
+    selectItem: (state, itemId) =>{
+      let isSelected = !state.selected[itemId];
       if(isSelected){
-        selected.add(id)
+        Vue.set(state.selected, itemId, true);
       }
       else {
-        selected.delete(id)
+        Vue.delete(state.selected, itemId);
       }
     },
- itemChanged(dateItems, {item, index}){
-      if(item.date === dateItems.date){
-        dateItems.items[index] = item
+    setToday: (state, date) => state.today = date,
+    setBoolean: (state, {key, value}) => state[key] = value,
+    cleanDates: state =>{
+      const {dates, selected} = state;
+
+      for(let date of dates){
+        date.items = date.items.filter(d => selected[d.id] === undefined)
+      }
+
+      state.dates = dates.filter(d => d.items.length > 0);
+
+      state.selected = {};
+    },
+    pushItem: (state, model) => {
+      const [date] = state.dates.filter(d => d.date === model.date);
+
+      if(date){
+        date.items.push(model.item);
       }
       else {
-        dateItems.items.splice(index, 1)
+        // TODO: This does not work
+        if(moment(model.date, 'YYYY-MM-DD').format('YYYY-MM') === moment(state.today, 'YYYY-MM-DD').format('YYYY-MM')){
+          state.dates.push({
+            date: model.date,
+            items: [model.item]
+          });
+          state.dates.sort((left, right) => (left.date > right.date) - (left.date < right.date));
+        }
+      }
+    },
+    editItem: (state, {itemIndex, dateIndex, item}) => {
+      let dateItems = state.dates[dateIndex];
+
+      if(item.date === dateItems.date){
+        dateItems.items[itemIndex] = item;
+      }
+      else {
+        dateItems.items.splice(itemIndex, 1);
         if(!dateItems.items.length){
-          this.dates.splice(this.dates.indexOf(dateItems), 1)
+          state.dates.splice(dateIndex, 1);
         }
 
-        [dateItems] = this.dates.filter(d => d.date === item.date)
+        [dateItems] = state.dates.filter(d => d.date === item.date);
 
         if(dateItems){
-          dateItems.items.push(item)
+          dateItems.items.push(item);
         }
         else {
-          this.dates.push({
+          state.dates.push({
             date: item.date,
             items: [item]
           })
         }
-
-        this.dates.sort((left, right) => (left.date > right.date) - (left.date < right.date))
       }
-    },
- deleteSelected(){
-      let toDelete = Array.from(this.selected)
 
-      this.loading = true
-      io.items.remove(toDelete)
-        .then(() =>{
-          for(let date of this.dates){
-            date.items = date.items.filter(d => !this.selected.has(d.id))
-          }
-
-          this.dates = this.dates.filter(d => d.items.length > 0)
-
-          this.selected = new Set()
-          this.loading = false
-        })
-
-
-        watch: {
-      $route (route) {
-        this.loadMonth(route.params)
-      }
-      ,
-      deleting (value) {
-        if (!value) {
-          this.selected = new Set()
-        }
-      }
+      state.dates.sort((left, right) => (left.date > right.date) - (left.date < right.date));
     }
-        */
+  },
+  actions: {
+    toggleEditing: ({commit}) => commit('toggle', 'isEditing'),
+    toggleDeleting: ({commit}) => commit('toggle', 'isDeleting'),
+    async setCurrentDate({commit}, {year, month}){
+      const yearMonth = moment().year(year).month(month).subtract(1, 'month');
+
+      commit('fetchStarted');
+
+      const dates = await io.items.fetchMonth({year, month});
+      dates.sort((left, right) => (left.date > right.date) - (left.date < right.date))
+        .forEach(date => date.items.forEach(item =>{
+          item.price = Number(item.price)
+        }));
+
+      commit('setDates', dates);
+      commit('setCurrentDate', yearMonth)
+    },
+    setToday: ({commit}, date) => commit('setToday', date),
+    selectItem: ({commit}, itemId) => commit('selectItem', itemId),
+    async submit({commit}, {item, callback}){
+      commit('setBoolean', {key: 'isSubmitting', value: true});
+
+      const model = await io.items.add(item);
+      model.item.price = Number(model.item.price);
+      commit('pushItem', model);
+      callback();
+      commit('setBoolean', {key: 'isSubmitting', value: false});
+
+      return model.item.id;
+    },
+    async deleteSelected({commit, state}){
+      const toDelete = Object.keys(state.selected);
+
+      commit('setBoolean', {key: 'isLoading', value: true});
+      await io.items.remove(toDelete);
+      commit('cleanDates');
+      commit('setBoolean', {key: 'isLoading', value: false});
+    },
+    async editItem({commit}, model){
+      const item = await io.items.edit(model.model);
+      commit('editItem', {item, ...model});
+    }
+  }
+}
