@@ -1,6 +1,6 @@
 <template>
   <div id="item-list-header">
-    <div class="current-date">{{ currentDateFormatted }}</div>
+    <div class="header-label">{{ currentDateFormatted }}</div>
 
     <button class="i"
             :class="{'i-mode_edit': !isEditing, 'i-close': isEditing}"
@@ -74,12 +74,4 @@
 
 <style lang="scss" rel="stylesheet/scss">
   @import '../../scss/consts';
-
-  .current-date {
-    left: 50%;
-    position: absolute;
-    text-align: center;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
 </style>

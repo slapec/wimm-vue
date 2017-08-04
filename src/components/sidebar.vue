@@ -2,7 +2,8 @@
   <div id="sidebar">
     <ol :class="{visible}">
       <router-link tag="li" :to="{name: 'index'}">Item overview</router-link>
-      <router-link tag="li" :to="{name: 'graph:sum'}">Sum graph</router-link>
+      <router-link tag="li" :to="{name: 'graph:sum'}">Total sum over time</router-link>
+      <router-link tag="li" :to="{name: 'grap:tags'}">Tag sum over time</router-link>
     </ol>
     <div class="overlay-close" v-if="visible" @click="toggle()"></div>
   </div>
@@ -42,7 +43,7 @@
       transform: translateX(-100%);
       transition: $sidebar-transition;
       width: $sidebar-width;
-      z-index: $layer-60;
+      z-index: $layer-70;
 
       li {
         border-bottom: $border;

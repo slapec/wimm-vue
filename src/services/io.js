@@ -12,6 +12,22 @@ class BaseIONode {
   }
 }
 
+class Stats extends BaseIONode {
+  totalSum({dateFrom, dateTo, interval}){
+    return fetch(`${this.root}/total_sum/?from=${dateFrom}&to=${dateTo}&interval=${interval}`, {
+      credentials: 'same-origin',
+    })
+      .then(v => v.json())
+  }
+
+  tagSum({dateFrom, dateTo, tagCount, negativeFirst}){
+    return fetch(`${this.root}/tag_sum/?from=${dateFrom}&to=${dateTo}&tagCount=${tagCount}&negativeFirst=${Number(negativeFirst)}`, {
+      credentials: 'same-origin',
+    })
+      .then(v => v.json())
+  }
+}
+
 class Items extends BaseIONode {
   fetchMonth({year, month}){
     return fetch(`${this.root}/items/?year=${year}&month=${month}`, {
@@ -93,6 +109,7 @@ class IO {
 
     this.items = null;
     this.tags = null;
+    this.stats = null;
 
     this.initialized = fetch('/api/settings')
       .then(v => v.json())
@@ -103,6 +120,7 @@ class IO {
 
         this.items = new Items(this);
         this.tags = new Tags(this);
+        this.stats = new Stats(this);
       })
   }
 

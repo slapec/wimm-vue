@@ -7,7 +7,9 @@ export default {
     overlayVisible(state, getters, rootState){
       return state.sidebarVisible
         || rootState.app.isInitializing
-        || rootState.itemList.isLoading;
+        || rootState.itemList.isLoading
+        || rootState.totalSum.isCalendarVisible
+        || rootState.tagSum.isCalendarVisible;
     },
     spinnerVisible(state, getters, rootState){
       return rootState.app.isInitializing
