@@ -42,8 +42,9 @@
         this.hideUi();
       }
     },
-    created(){
-      io.initialized.then(() => {this.initialized()});
+    async created(){
+      await io.initialized;
+      this.initialized();
     }
   }
 </script>
@@ -62,6 +63,7 @@
     font-family: $font-family;
     font-size: $font-size;
     background: $bg;
+    overflow: hidden;
   }
 
   #app {
@@ -94,13 +96,13 @@
   }
 
   .overlay-close {
-      bottom: 0;
-      left: 0;
-      position: absolute;
-      right: 0;
-      top: 0;
-      z-index: $layer-50;
-    }
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: $layer-50;
+  }
 
   @keyframes spin {
     0% {
@@ -135,16 +137,29 @@
   }
 
   .numeric {
-  font-family: monospace;
-}
+    font-family: monospace;
+  }
 
-.positive {
-  color: #1b9c0b;
-}
+  .positive {
+    color: #1b9c0b;
+  }
 
-.loading {
-  position: fixed;
-  width: 100%;
-}
+  .loading {
+    position: fixed;
+    width: 100%;
+  }
+
+  .header-label {
+    left: 50%;
+    position: absolute;
+    text-align: center;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .calendar {
+      display: flex;
+      flex-direction: column;
+  }
 
 </style>

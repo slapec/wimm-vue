@@ -1,11 +1,13 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
-import GraphSum from '@/components/graph-sum/component';
-import GraphSumHeader from '@/components/graph-sum/header';
+import TotalSum from '@/components/total-sum/component';
+import TotalSumHeader from '@/components/total-sum/header';
 import ItemList from '@/components/item-list/component';
 import ItemListHeader from '@/components/item-list/header';
 import store from '@/store';
+import TagSum from '@/components/tag-sum/component';
+import TagSumHeader from '@/components/tag-sum/header';
 
 Vue.use(Router);
 
@@ -37,10 +39,18 @@ export default new Router({
     },
     {
       name: 'graph:sum',
-      path: '/graph/sum/',
+      path: '/graph/total/',
       components: {
-        default: GraphSum,
-        header: GraphSumHeader
+        default: TotalSum,
+        header: TotalSumHeader
+      }
+    },
+    {
+      name: 'grap:tags',
+      path: '/graph/tags/',
+      components: {
+        default: TagSum,
+        header: TagSumHeader
       }
     }
   ]
