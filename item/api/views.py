@@ -2,11 +2,14 @@
 
 from itertools import groupby
 
-from django.db.models import Count
+from dateutil.parser import parse
+from django.db.models import Count, Sum
+from qsstats import QuerySetStats
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ViewSet
+from taggit.models import Tag
 
 from item.api.serializers import ItemSerializer
 from item.models import Item, TaggedItem
@@ -67,7 +70,7 @@ class Items(ModelViewSet):
         return Response(response, status=status.HTTP_201_CREATED, headers=headers)
 
     def delete(self, request, *args, **kwargs):
-        pks_to_delete = set(request.DELETE['items'])
+        pks_to_delete = set(int(_) for _ in request.DELETE['items'])
 
         qs = self.filter_queryset(self.get_queryset()).filter(pk__in=pks_to_delete)
 
@@ -92,3 +95,33 @@ class Autocomplete(ViewSet):
                 ]
 
         return Response(tags)
+
+
+class TotalSum(ViewSet):
+    def list(self, request):
+        date_from = parse(request.GET['from']).date()
+        date_to = parse(request.GET['to']).date()
+        interval = request.GET['interval']
+
+        assert interval in {'years', 'months', 'weeks', 'days'}
+
+        qs = Item.objects.all()
+        qss = QuerySetStats(qs, date_field='date', aggregate=Sum('price')). \
+                time_series(date_from, date_to, interval=interval)
+
+        return Response((_[0].date(), _[1]) for _ in qss)
+
+
+class TagSum(ViewSet):
+    def list(self, request):
+        date_from = parse(request.GET['from']).date()
+        date_to = parse(request.GET['to']).date()
+        tagCount = int(request.GET['tagCount'])
+        negativeFirst = 'sum_price' if request.GET['negativeFirst'] == '1' else '-sum_price'
+
+        qs = Tag.objects. \
+                 filter(item__date__gte=date_from, item__date__lte=date_to). \
+                 annotate(sum_price=Sum('item__price')). \
+                 order_by(negativeFirst)[:tagCount]
+
+        return Response((_.name, _.sum_price) for _ in qs)
