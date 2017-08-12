@@ -29,11 +29,11 @@
   .settings-bar {
     .bar {
       background: $bg-ui;
-      position: absolute;
+      position: fixed;
       z-index: $layer-60;
       top: 0;
       bottom: 0;
-      width: 30vw;
+      width: $sidebar-width;
       right: 0;
       transform: translateX(100%);
       transition: 0.2s ease transform;

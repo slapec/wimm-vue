@@ -2,7 +2,7 @@
   <div>
     <div id="tag-sum">
       <div class="content">
-        <horizontal-bar-chart :chartData="chart" :styles="{height: '100%'}"></horizontal-bar-chart>
+        <horizontal-bar-chart :chartData="chart" :styles="{height: '100%'}" :options="{}"></horizontal-bar-chart>
       </div>
       <settings-bar :visible="isCalendarVisible" @hide="hideUi">
         <calendar :dateFrom="dateFrom" :dateTo="dateTo"
@@ -14,6 +14,9 @@
         <label for="tag-sum-negative-first">Negative first</label>
         <input id="tag-sum-negative-first" type="checkbox" :checked="negativeFirst" @change="onChanged('negativeFirst', $event.target.checked)">
 
+        <label for="tag-sum-tags">Filter tags</label>
+        <tag-input id="tag-sum-tags" :choices="autocomplete()" :tags="tags"></tag-input>
+
         <button class="do-query" @click="doQuery">Query</button>
       </settings-bar>
     </div>
@@ -22,28 +25,31 @@
 
 <script>
   import {mapActions, mapGetters, mapState} from "vuex";
-  import HorizontalBarChart from '@/components/charts/horizontal-bar';
 
-  import SettingsBar from '@/components/settings-bar';
   import Calendar from '@/components/calendar';
+  import HorizontalBarChart from '@/components/charts/horizontal-bar';
+  import IO from '@/services/io';
+  import SettingsBar from '@/components/settings-bar';
+  import TagInput from '@/components/tag-input';
 
   export default {
     components: {
-      HorizontalBarChart, SettingsBar, Calendar
+      HorizontalBarChart, SettingsBar, Calendar, TagInput
     },
     data(){
       return {
-        chart: {}
+        chart: {},
       }
     },
     computed: {
       ...mapState('tagSum', [
-        'isCalendarVisible', 'dateFrom', 'dateTo', 'tagCount', 'negativeFirst'
+        'isCalendarVisible', 'dateFrom', 'dateTo', 'tagCount', 'negativeFirst', 'tags'
       ]),
-      ...mapGetters('tagSum', ['chartData'])
+      ...mapGetters('tagSum', ['chartData']),
     },
     methods: {
       ...mapActions('tagSum', ['hideUi', 'setProperty', 'query']),
+      ...mapGetters('tags', ['autocomplete']),
       onChanged(key, value){
         this.setProperty({key, value});
       },
@@ -59,6 +65,11 @@
     beforeRouteLeave(to, from, next){
       this.hideUi();
       next();
+    },
+    watch: {
+      tags(value){
+        this.setProperty({key: 'tags', value});
+      }
     }
   }
 </script>
@@ -68,10 +79,6 @@
 
   #tag-sum {
     height: 100%;
-
-    .content {
-      height: 100%;
-    }
 
     .do-query {
       margin-top: 6px;

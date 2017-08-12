@@ -79,7 +79,7 @@
 
   #overlay {
     background: $overlay-bg;
-    position: absolute;
+    position: fixed;
     left: 0;
     right: 0;
     top: 0;
@@ -160,6 +160,12 @@
   .calendar {
       display: flex;
       flex-direction: column;
+  }
+
+  .content {
+    padding: 8px;
+    box-sizing: border-box;
+    height: 100%;
   }
 
 </style>

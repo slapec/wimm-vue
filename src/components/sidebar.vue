@@ -4,6 +4,7 @@
       <router-link tag="li" :to="{name: 'index'}">Item overview</router-link>
       <router-link tag="li" :to="{name: 'graph:sum'}">Total sum over time</router-link>
       <router-link tag="li" :to="{name: 'grap:tags'}">Tag sum over time</router-link>
+      <router-link tag="li" :to="{name: 'import-export'}">Import / export</router-link>
     </ol>
     <div class="overlay-close" v-if="visible" @click="toggle()"></div>
   </div>
@@ -38,7 +39,7 @@
       list-style: none;
       margin: 0;
       padding: 0;
-      position: absolute;
+      position: fixed;
       top: 0;
       transform: translateX(-100%);
       transition: $sidebar-transition;

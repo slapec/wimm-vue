@@ -20,8 +20,19 @@ class Stats extends BaseIONode {
       .then(v => v.json())
   }
 
-  tagSum({dateFrom, dateTo, tagCount, negativeFirst}){
-    return fetch(`${this.root}/tag_sum/?from=${dateFrom}&to=${dateTo}&tagCount=${tagCount}&negativeFirst=${Number(negativeFirst)}`, {
+  tagSum({dateFrom, dateTo, tagCount, negativeFirst, tags=[]}){
+    const params = new URLSearchParams();
+
+    params.append('from', dateFrom);
+    params.append('to', dateTo);
+    params.append('tagCount', tagCount);
+    params.append('negativeFirst', Number(negativeFirst));
+
+    for(let tag of tags){
+      params.append('tags', tag);
+    }
+
+    return fetch(`${this.root}/tag_sum/?${params}`, {
       credentials: 'same-origin',
     })
       .then(v => v.json())
@@ -45,6 +56,13 @@ class Items extends BaseIONode {
       });
   }
 
+  fetchRange({dateFrom, dateTo}){
+    return fetch(`${this.root}/items/?from=${dateFrom}&to=${dateTo}`, {
+      credentials: 'same-origin'
+    })
+      .then(v => v.json())
+  }
+
   add(item){
     if(item){
       return fetch(`${this.root}/items/`, {
@@ -62,6 +80,19 @@ class Items extends BaseIONode {
     else {
       return Promise.resolve()
     }
+  }
+
+  addFromFile(file){
+    const data = new FormData();
+    data.append('file', file);
+
+    return fetch(`${this.root}/items/upload/`, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: this.headers,
+      body: data
+    })
+      .then(v => v.json())
   }
 
   remove(items){

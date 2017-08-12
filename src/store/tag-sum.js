@@ -12,7 +12,8 @@ export default {
     labels: [],
     values: [],
     tagCount: 10,
-    negativeFirst: true
+    negativeFirst: true,
+    tags: []
   },
   mutations: {
     toggleCalendar: state => state.isCalendarVisible = !state.isCalendarVisible,
@@ -56,7 +57,8 @@ export default {
         dateFrom: state.dateFrom,
         dateTo: state.dateTo,
         tagCount: state.tagCount,
-        negativeFirst: state.negativeFirst
+        negativeFirst: state.negativeFirst,
+        tags: state.tags
       });
 
       commit('setValues', values);
