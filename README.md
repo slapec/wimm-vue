@@ -3,6 +3,8 @@
 There are so many budget trackers it's just easier to code a new one
 than to choose one.
 
+(Edit: probably not)
+
 ## Setup
 
 1.  Get a Python 3 environment

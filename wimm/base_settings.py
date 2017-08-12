@@ -25,7 +25,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # 3rd party
+    'rest_framework',
     'taggit',
+
+    # project
     'item'
 ]
 
@@ -119,5 +124,13 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
-# ------------------------------------------------------------------------------
+# django-taggit ----------------------------------------------------------------
 TAGGIT_CASE_INSENSITIVE = True
+
+# django-rest-framework --------------------------------------------------------
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.AdminRenderer',
+    )
+}
