@@ -5,6 +5,11 @@ than to choose one.
 
 (Edit: probably not)
 
+## Where Is My UI?
+
+This repo contains the backend code only. The reference frontend
+lives here: [https://github.com/slapec/wimm-vue](https://github.com/slapec/wimm-vue)
+
 ## Setup
 
 1.  Get a Python 3 environment
