@@ -63,10 +63,6 @@
   #total-sum {
     height: 100%;
 
-    .content {
-      height: 100%;
-    }
-
     .do-query {
       margin-top: 6px;
     }

@@ -10,6 +10,16 @@ export default HorizontalBar.extend({
         responsive: true,
         maintainAspectRatio: false,
         height: '100%',
+        scales: {
+          xAxes: [{
+            ticks: {
+              beginAtZero: true
+            },
+            gridLines: {
+              display: true
+            }
+          }]
+        }
       }
     }
   },
