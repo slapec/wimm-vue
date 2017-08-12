@@ -1,13 +1,17 @@
 # coding: utf-8
 
+import csv
+import io
 from itertools import groupby
 
 from dateutil.parser import parse
+from django.db import transaction
 from django.db.models import Count, Sum
 from qsstats import QuerySetStats
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ViewSet
 from taggit.models import Tag
 
@@ -19,13 +23,15 @@ class Items(ModelViewSet):
     queryset = Item.objects.all()
     serializer_class = ItemSerializer
 
-    def filter_queryset(self, queryset):
+    def filter_queryset(self, qs):
         GET = self.request.GET
 
         if 'year' in GET and 'month' in GET:
-            queryset = queryset.filter(date__year=GET['year'], date__month=GET['month'])
+            qs = qs.filter(date__year=GET['year'], date__month=GET['month'])
+        elif 'from' in GET and 'to' in GET:
+            qs = qs.filter(date__gte=GET['from'], date__lt=GET['to'])
 
-        return queryset
+        return qs
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -85,6 +91,32 @@ class Items(ModelViewSet):
         return Response({})
 
 
+class ItemsUpload(APIView):
+    def post(self, request, format=None):
+        text = request.data['file'].read().decode()
+
+        reader = csv.DictReader(io.StringIO(text), delimiter=',')
+        counter = 0
+
+        try:
+            with transaction.atomic():
+                for item in reader:
+                    tags = item['tags'].split(',')
+
+                    model = Item.objects.create(
+                        date=item['date'],
+                        price=float(item['price']),
+                    )
+
+                    model.tags.add(*tags)
+
+                    counter += 1
+        except Exception as e:
+            return Response({'error': str(e)})
+        else:
+            return Response({'imported': counter})
+
+
 class Autocomplete(ViewSet):
     def list(self, request):
         term = request.GET['term']
@@ -118,10 +150,12 @@ class TagSum(ViewSet):
         date_to = parse(request.GET['to']).date()
         tagCount = int(request.GET['tagCount'])
         negativeFirst = 'sum_price' if request.GET['negativeFirst'] == '1' else '-sum_price'
+        tags = request.GET.getlist('tags')
 
-        qs = Tag.objects. \
-                 filter(item__date__gte=date_from, item__date__lte=date_to). \
-                 annotate(sum_price=Sum('item__price')). \
-                 order_by(negativeFirst)[:tagCount]
+        qs = Tag.objects.filter(item__date__gte=date_from, item__date__lte=date_to)
+        if tags:
+            qs = qs.filter(name__in=tags)
+
+        qs = qs.annotate(sum_price=Sum('item__price')).order_by(negativeFirst)[:tagCount]
 
         return Response((_.name, _.sum_price) for _ in qs)
