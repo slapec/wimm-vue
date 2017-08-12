@@ -1,13 +1,11 @@
 # coding: utf-8
 
-from django.conf.urls import url
+from django.conf.urls import url, include
 
-from item.views import YearMonthItemApi, ItemApi, ItemTagsAuto, Index
+from wimm.api import api
+
 
 urlpatterns = [
-    url(r'^$', Index.as_view(), name='index'),
-    url(r'^items/(?P<year>[0-9]{4})/(?P<month>[0-9]{2})/$', YearMonthItemApi.as_view()),
-    url(r'^items/$', ItemApi.as_view()),
-    url(r'^items/(?P<item_id>\d+)/$', ItemApi.as_view()),
-    url(r'^autocomplete/tags/$', ItemTagsAuto.as_view()),
+    url(r'^api/items/', include('item.api', namespace='item')),
+    url(r'api/', include(api.urls, namespace='api'))
 ]
