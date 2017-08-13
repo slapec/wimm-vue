@@ -142,7 +142,9 @@ class IO {
     this.tags = null;
     this.stats = null;
 
-    this.initialized = fetch('/api/settings')
+    this.initialized = fetch('./api/settings', {
+      credentials: 'same-origin'
+    })
       .then(v => v.json())
       .then(data =>{
         this.root = `${data.root}/api`;
