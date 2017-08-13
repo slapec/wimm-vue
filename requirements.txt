@@ -4,4 +4,4 @@ python-dateutil==2.5.3
 django-taggit==0.20.2
 djangorestframework==3.6.3
 django-taggit-serializer==0.1.5
--e git+https://github.com/PetrDlouhy/django-qsstats-magic.git
+-e git+https://github.com/PetrDlouhy/django-qsstats-magic.git#egg=django-qsstats-magic
