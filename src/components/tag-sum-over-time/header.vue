@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="header-label">Total sum by tags</div>
+    <div class="header-label">Tag sum over time</div>
     <div class="fill"></div>
 
     <button class="i i-date_range" @click="toggleCalendar"></button>
@@ -12,7 +12,7 @@
 
   export default {
     methods: {
-      ...mapActions('tagSum', ['toggleCalendar'])
+      ...mapActions('tagSumOverTime', ['toggleCalendar'])
     }
   }
 </script>

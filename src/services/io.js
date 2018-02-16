@@ -20,6 +20,25 @@ class Stats extends BaseIONode {
       .then(v => v.json())
   }
 
+  tagSumOverTime({dateFrom, dateTo, interval, tags, baseTag, noBase}){
+    const params = new URLSearchParams();
+
+    params.append('from', dateFrom);
+    params.append('to', dateTo);
+    params.append('interval', interval);
+    params.append('base_tag', baseTag);
+    params.append('no_base', noBase);
+
+    for(let tag of tags){
+      params.append('tags', tag);
+    }
+
+    return fetch(`${this.root}/tag_sum_over_time/?${params}`, {
+      credentials: 'same-origin',
+    })
+    .then(v => v.json())
+  }
+
   tagSum({dateFrom, dateTo, tagCount, negativeFirst, tags=[]}){
     const params = new URLSearchParams();
 
@@ -142,7 +161,7 @@ class IO {
     this.tags = null;
     this.stats = null;
 
-    this.initialized = fetch('./api/settings', {
+    this.initialized = fetch('./api/settings/', {
       credentials: 'same-origin'
     })
       .then(v => v.json())

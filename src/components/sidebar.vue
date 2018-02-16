@@ -2,8 +2,9 @@
   <div id="sidebar">
     <ol :class="{visible}">
       <router-link tag="li" :to="{name: 'index'}">Item overview</router-link>
-      <router-link tag="li" :to="{name: 'graph:sum'}">Total sum over time</router-link>
-      <router-link tag="li" :to="{name: 'grap:tags'}">Tag sum over time</router-link>
+      <router-link tag="li" :to="{name: 'graph:total-sum'}">Total sum over time</router-link>
+      <router-link tag="li" :to="{name: 'graph:tag-total'}">Total sum by tags</router-link>
+      <router-link tag="li" :to="{name: 'graph:tag-time'}">Tag sum over time</router-link>
       <router-link tag="li" :to="{name: 'import-export'}">Import / export</router-link>
     </ol>
     <div class="overlay-close" v-if="visible" @click="toggle()"></div>

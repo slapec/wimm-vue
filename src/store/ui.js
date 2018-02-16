@@ -9,7 +9,8 @@ export default {
         || rootState.app.isInitializing
         || rootState.itemList.isLoading
         || rootState.totalSum.isCalendarVisible
-        || rootState.tagSum.isCalendarVisible;
+        || rootState.tagSum.isCalendarVisible
+        || rootState.tagSumOverTime.isCalendarVisible;
     },
     spinnerVisible(state, getters, rootState){
       return rootState.app.isInitializing
