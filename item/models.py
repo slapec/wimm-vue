@@ -7,7 +7,7 @@ from taggit.models import TaggedItemBase
 
 
 class TaggedItem(TaggedItemBase):
-    content_object = models.ForeignKey('Item')
+    content_object = models.ForeignKey('Item', on_delete=models.CASCADE)
 
 
 class Item(models.Model):

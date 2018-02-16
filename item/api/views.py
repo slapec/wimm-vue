@@ -2,6 +2,7 @@
 
 import csv
 import io
+from collections import defaultdict
 from itertools import groupby
 
 from dateutil.parser import parse
@@ -159,3 +160,65 @@ class TagSum(ViewSet):
         qs = qs.annotate(sum_price=Sum('item__price')).order_by(negativeFirst)[:tagCount]
 
         return Response((_.name, _.sum_price) for _ in qs)
+
+
+class TagSumOverTime(ViewSet):
+    def list(self, request):
+        date_from = parse(request.GET['from']).date()
+        date_to = parse(request.GET['to']).date()
+        interval = request.GET['interval']
+        tags = request.GET.getlist('tags')
+        base_tag = request.GET['base_tag']
+        no_base = request.GET['no_base']
+
+        assert interval in {'years', 'months', 'weeks', 'days'}
+
+        base_tag_aggregate = {}
+        has_positive = False
+        dates = set()
+
+        if no_base == 'false':
+            qs = Item.objects.all()
+            if base_tag:
+                qs = qs.filter(tags__name=base_tag)
+
+            qss = QuerySetStats(qs, date_field='date', aggregate=Sum('price')). \
+                time_series(date_from, date_to, interval=interval)
+
+            for datetime, value in qss:
+                dates.add(datetime.date())
+                base_tag_aggregate[datetime.date()] = value
+
+                has_positive |= value > 0
+
+        tag_aggregates = {}
+        for tag in tags:
+            qs = Item.objects.filter(tags__name=tag)
+            qss = QuerySetStats(qs, date_field='date', aggregate=Sum('price')). \
+                time_series(date_from, date_to, interval=interval)
+
+            tag_aggregate = {}
+            for datetime, value in qss:
+                dates.add(datetime.date())
+                tag_aggregate[datetime.date()] = value
+
+                has_positive |= value > 0
+            tag_aggregates[tag] = tag_aggregate
+
+        retval = {
+            'base': [],
+            'tags': defaultdict(list)
+        }
+
+        has_positive = 1 if has_positive else -1
+
+        for date in sorted(dates):
+            value = base_tag_aggregate.get(date, 0)
+            retval['base'].append((date, has_positive * value))
+
+            for tag, tag_aggregate in tag_aggregates.items():
+                value = tag_aggregate.get(date, 0)
+
+                retval['tags'][tag].append(has_positive * value)
+
+        return Response(retval)
