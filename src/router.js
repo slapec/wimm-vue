@@ -48,7 +48,7 @@ export default new Router({
       }
     },
     {
-      name: 'grap:tags',
+      name: 'graph:tags',
       path: '/graph/tags/',
       components: {
         default: TagSum,
