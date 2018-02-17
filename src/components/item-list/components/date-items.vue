@@ -2,7 +2,12 @@
   <div class="date-items">
     <div class="numeric date-items-head">
       <div class="date">{{ date }}</div>
-      <div>{{ dailyExpense | money }}</div>
+      <div class="daily-expense" v-if="dailyExpense">
+        {{ dailyExpense | money }}
+      </div>
+      <div v-else>
+        &nbsp;
+      </div>
     </div>
     <ul class="items">
       <li v-for="(item, itemIndex) of items"
@@ -13,7 +18,7 @@
           <template v-if="editors[item.id]">
             <item-form :id="'item-form-' + item.id"
                        :tags="item.tags"
-                       :price="item.price"
+                       :price="Number(item.price) < 0 ? -1 * Number(item.price) : '+' + item.price"
                        :date="item.date"
                        :disabled="submitting[item.id]"
                        @submit="submit(itemIndex, item, $event)"></item-form>
@@ -53,7 +58,6 @@
 
 <script>
   import ItemForm from '@/components/item-form';
-  import IO from '@/services/io';
   import {mapActions, mapGetters, mapState} from "vuex";
 
   let formatter = Intl.NumberFormat();
@@ -90,7 +94,7 @@
       },
       dailyExpense(){
         return this.items.reduce((sum, item) =>
-            item.price < 0 ? sum + item.price : sum,
+            item.price < 0 ? sum + Number(item.price) : sum,
           0);
       }
     },
@@ -162,13 +166,21 @@
     }
 
     .date-items-head {
+      position: relative;
       text-align: center;
       padding: $date-items-head-padding;
       border-bottom: $date-items-head-bottom-border;
       display: flex;
 
       .date {
-        flex-grow: 1;
+        position: absolute;
+        left: 0;
+        right: 0;
+      }
+
+      .daily-expense {
+        margin-left: auto;
+        z-index: $layer-10;
       }
     }
 

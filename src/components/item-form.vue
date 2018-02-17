@@ -68,19 +68,16 @@
           this.pDate = value;
         },
         rawPrice(){
-          let value = this.pPrice.trim();
+          let trimmedValue = String(this.pPrice).trim();
+          let literalValue = mathjs.eval(trimmedValue);
 
-          value = mathjs.eval(value);
-
-          let sign = value;
+          let sign = trimmedValue[0];
 
           if(!(sign === '+') && !(sign === '-')){
-            value = -1 * value
+            literalValue = -1 * literalValue;
           }
 
-          return value;
-
-
+          return literalValue;
         },
         submit(){
           let item = {
