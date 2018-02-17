@@ -14,13 +14,10 @@
                @input="dateChanged($event.target.value)"
                :value="pDate"
                :disabled="disabled">
-        <input type="number"
-               class="price numeric"
-               step="0.01"
+        <input class="price numeric"
                autocomplete="off"
                placeholder="Price"
                required
-               ref="price"
                v-model="pPrice"
                :disabled="disabled">
     </form>
@@ -30,7 +27,7 @@
 
 <script>
     import TagInput from './tag-input';
-    import IO from '@/services/io';
+    import mathjs from 'mathjs';
     import {mapGetters} from "vuex";
 
 
@@ -70,19 +67,19 @@
           this.pDate = value;
         },
         rawPrice(){
-          let price = this.$refs.price;
+          let value = this.pPrice.trim();
 
-          price.select();
-          let value = window.getSelection().toString();
-          price.blur();
+          value = mathjs.eval(value);
 
-          let sign = value[0];
+          let sign = value;
 
           if(!(sign === '+') && !(sign === '-')){
-            value = -1 * Number(value);
+            value = -1 * value
           }
 
           return value;
+
+
         },
         submit(){
           let item = {
