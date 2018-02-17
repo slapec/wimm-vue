@@ -17,6 +17,7 @@
         <input class="price numeric"
                autocomplete="off"
                placeholder="Price"
+               ref="price"
                required
                v-model="pPrice"
                :disabled="disabled">
